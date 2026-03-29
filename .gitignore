@@ -1,0 +1,50 @@
+# Secrets — NEVER sync these
+.env
+.env.*
+config/credentials.json
+config/token.json
+*.key
+*.pem
+
+# WhatsApp session data
+whatsapp_session/
+session_data/
+
+# MCP server credentials
+**/gcp-oauth.keys.json
+**/.gmail-mcp/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Node
+node_modules/
+
+# Obsidian internal
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+
+# Docker volumes (Odoo data)
+odoo-data/
+db-data/
+
+# Large files
+*.zip
+*.tar.gz
+
+# Claude local settings
+.claude/settings.local.json
+
+# Chromium profile (LinkedIn automation)
+config/chromium_profile
+
+# Claude memory (local only)
+memory/
