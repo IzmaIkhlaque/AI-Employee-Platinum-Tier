@@ -1,0 +1,20 @@
+[Unit]
+Description=AI Employee Cloud Agent
+After=network.target docker.service
+Wants=docker.service
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/AI_Employee_Vault
+ExecStart=/usr/bin/python3.13 cloud/cloud_agent.py
+Restart=always
+RestartSec=30
+Environment=PATH=/home/ubuntu/.local/bin:/usr/local/bin:/usr/bin:/bin
+EnvironmentFile=/home/ubuntu/AI_Employee_Vault/.env
+
+StandardOutput=append:/home/ubuntu/logs/cloud_agent.log
+StandardError=append:/home/ubuntu/logs/cloud_agent_error.log
+
+[Install]
+WantedBy=multi-user.target

@@ -2,7 +2,14 @@
 
 ## Identity
 
-You are an AI Employee operating within this Obsidian vault. Your role is to process incoming items, classify them, and maintain an organized system.
+You are an AI Employee operating within this Obsidian vault at **Platinum Tier**.
+Your role depends on which agent you are:
+
+- **Cloud Agent** (EC2): Read, draft, plan, sync. Never send or post directly.
+- **Local Agent** (Windows PC): Execute approved actions, update Dashboard, own external sends.
+- **Single Agent** (Gold/dev mode): Full autonomy within HITL rules.
+
+Check `AGENT_ROLE` in `.env` to determine your role. If unset, operate as a single Gold-tier agent.
 
 ## Core Workflow
 
@@ -649,3 +656,154 @@ Incoming item arrives
 ⛔ ALWAYS check Business_Goals.md before drafting social content
 ⛔ ALWAYS read /Accounting/Current_Month.md before quoting financial figures
 ```
+
+---
+
+## Platinum Tier Additions
+
+This vault operates at **Platinum Tier**, which adds a two-agent system: a Cloud
+Agent running 24/7 on AWS EC2 and a Local Agent on the Windows PC. They
+communicate exclusively through this Git-synced vault.
+
+### Two-Agent Architecture
+
+```
+AWS EC2 (Cloud Agent)                   Windows PC (Local Agent)
+─────────────────────                   ──────────────────────────
+Gmail watcher (every 2 min)             Vault sync (every 10 min)
+Social draft generation (30 min)        Merge /Updates → Dashboard.md
+Odoo read + /Updates write (60 min)     Execute /Approved actions
+Heartbeat → /Signals/ (5 min)          Monitor Cloud heartbeat
+git push (every 5 min via cron)         git pull + git push (vault_sync.bat)
+                    │                               │
+                    └─────── GitHub repo ───────────┘
+                         (single source of truth)
+```
+
+### Work-Zone Rules
+
+**Cloud Agent CAN:**
+- Read Gmail and create `/Needs_Action/email/EMAIL_*.md`
+- Draft replies and save to `/Pending_Approval/email/`
+- Generate social media drafts → `/Pending_Approval/social/`
+- Query Odoo (read-only) and write summary to `/Updates/`
+- Create `PLAN_*.md` files in `/Plans/`
+- Write heartbeat to `/Signals/cloud_heartbeat.md`
+
+**Cloud Agent CANNOT:**
+- Send any email (`send_email` is blocked by role)
+- Publish any social media post
+- Create or update Odoo records
+- Write to `Dashboard.md` directly (use `/Updates/` instead)
+- Access WhatsApp session or banking credentials
+
+**Local Agent OWNS:**
+- All external sends: email, social posts, Odoo writes
+- `Dashboard.md` — single-writer rule, merges from `/Updates/`
+- `/Approved` → `/Rejected` decisions (human + Local execute together)
+- WhatsApp session and payment credentials
+
+### Claim-by-Move Rule
+
+Before processing ANY item in `/Needs_Action`:
+
+1. Check `/In_Progress/local/` — if item is there, **SKIP IT** (Local owns it)
+2. Check `/In_Progress/cloud/` — if item is there, **SKIP IT** (Cloud owns it)
+3. Move item to `/In_Progress/{your_agent}/` — you now own it
+4. Process it → move to `/Pending_Approval/{domain}/` or `/Done/`
+
+This is enforced by filesystem `shutil.move()` — the first agent to move it wins.
+
+### Vault Sync via Git
+
+All communication between agents travels through the GitHub repository.
+
+**Cloud pushes:** every 5 minutes via cron (`scripts/vault_sync_cloud.sh`)
+**Local pulls:** every 10 minutes via Task Scheduler (`scripts/vault_sync.bat`)
+
+**Conflict resolution rules:**
+- `Dashboard.md` — Local always wins (revert Cloud's changes)
+- `/Needs_Action` files — keep both, rename with agent suffix if conflict
+- `/Done` files — keep both (timestamps prevent collisions)
+- `.env` — NEVER synced (in `.gitignore`)
+
+### Security: What Never Syncs
+
+The following are in `.gitignore` and must NEVER be committed:
+
+```
+.env / .env.*                 — all credentials
+config/credentials.json       — Gmail OAuth client
+config/token.json             — Gmail OAuth token
+*.key / *.pem                 — SSH and SSL keys
+whatsapp_session/             — WhatsApp auth session
+odoo-cloud/ssl/               — self-signed TLS certs
+memory/                       — local-only state
+.claude/settings.local.json   — local Claude settings
+```
+
+Each agent manages its own `.env` with its own credentials.
+Secrets are transferred ONLY via SCP, never via git.
+
+### /Updates and /Signals Folder Usage
+
+**`/Updates/`** — Cloud writes, Local reads and merges:
+- `odoo_sync_YYYYMMDD_HHMMSS.md` — Odoo snapshot for Dashboard
+- Local merges each file into `Dashboard.md`, then moves to `/Done/`
+
+**`/Signals/`** — lightweight inter-agent messages:
+- `cloud_heartbeat.md` — Cloud rewrites every 5 min; Local checks age
+- `REVIEW_NEEDED_*.md` — Local writes when pending approvals need attention
+- `URGENT_cloud_heartbeat_dead_*.md` — Local creates if heartbeat > 60 min old
+- `SIGNAL_SYNC_NEEDED_*.md` / `SIGNAL_URGENT_REVIEW_*.md` — ad-hoc messages
+
+### Single-Writer Rule for Dashboard.md
+
+`Dashboard.md` is owned exclusively by the Local Agent.
+
+- **Cloud Agent:** NEVER writes to `Dashboard.md`. Write summaries to `/Updates/` instead.
+- **Local Agent:** Reads all `/Updates/*.md` files after each git pull, merges the data, then moves update files to `/Done/`.
+- **Conflict scenario:** If git detects a conflict on `Dashboard.md`, always accept the Local version (`git checkout --ours Dashboard.md`).
+
+### Platinum Tier Skills
+
+| Skill | Agent | Description |
+|-------|-------|-------------|
+| `vault-sync` | Both | Git-based sync, conflict resolution, signal processing |
+| `local-agent` | Local | Execute approved actions, merge updates, heartbeat monitoring |
+| `cloud-odoo` | Cloud | Read-only Odoo queries, write requests via /Pending_Approval |
+
+### Platinum Tier Folders
+
+| Folder | Owner | Purpose |
+|--------|-------|---------|
+| `/In_Progress/cloud/` | Cloud | Items claimed by Cloud Agent |
+| `/In_Progress/local/` | Local | Items claimed by Local Agent |
+| `/Updates/` | Cloud writes, Local reads | Odoo snapshots, status updates |
+| `/Signals/` | Both | Heartbeat, review alerts, urgent signals |
+| `/Needs_Action/email/` | Cloud creates | Email-specific action items |
+| `/Needs_Action/social/` | Cloud creates | Social media action items |
+| `/Needs_Action/accounting/` | Either | Accounting action items |
+| `/Pending_Approval/email/` | Cloud drafts | Email replies awaiting human review |
+| `/Pending_Approval/social/` | Cloud drafts | Social posts awaiting human review |
+| `/Pending_Approval/accounting/` | Cloud requests | Odoo write requests |
+
+### Platinum Demo (Minimum Passing Gate)
+
+```
+Email arrives → Cloud detects → Cloud creates EMAIL_*.md
+→ Cloud claims (moves to /In_Progress/cloud/)
+→ Cloud drafts reply → saves to /Pending_Approval/email/
+→ Cloud git push
+→ Local git pull (vault sync)
+→ Human reviews draft in Obsidian
+→ Human moves to /Approved/
+→ Local detects /Approved file
+→ Local sends email via Gmail MCP
+→ Local logs to /Logs/audit.jsonl
+→ Local moves to /Done/
+→ Local git push
+```
+
+Run the demo: `python tests/platinum_demo.py`
+See walkthrough: `docs/platinum-demo-walkthrough.md`

@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """
-AI Employee Orchestrator (Gold Tier)
+AI Employee Orchestrator (Platinum / Gold Tier)
 
-Monitors vault folders and coordinates all AI Employee actions.
-Polls /Needs_Action, /Approved, and /Social_Media every 30 seconds.
-Runs a lightweight MCP/service health check every 5 minutes.
+Reads AGENT_ROLE from .env to select the appropriate agent:
+
+  AGENT_ROLE=cloud  -> cloud/cloud_agent.py  (EC2 — draft-only)
+  AGENT_ROLE=local  -> local/local_agent.py  (Windows PC — executor)
+  (not set)         -> Gold-tier single-agent loop (this file)
 
 Usage:
     python orchestrator.py
@@ -880,6 +882,40 @@ def main():
     if not vault_path.exists():
         print(f"Error: Vault path does not exist: {vault_path}")
         sys.exit(1)
+
+    # ── Platinum: AGENT_ROLE dispatch ─────────────────────────────────────────
+    # Load .env early so AGENT_ROLE is available before any other setup.
+    _load_dotenv(vault_path)
+    agent_role = os.environ.get("AGENT_ROLE", "").lower().strip()
+
+    if agent_role == "cloud":
+        # Delegate entirely to the Cloud Agent
+        print("[Orchestrator] AGENT_ROLE=cloud -> delegating to cloud/cloud_agent.py")
+        from cloud.cloud_agent import CloudAgent
+        import asyncio
+        cloud = CloudAgent(dry_run=args.dry_run)
+        if args.once:
+            asyncio.run(cloud._cycle_once()) if hasattr(cloud, "_cycle_once") \
+                else asyncio.run(cloud._health_check())
+        else:
+            asyncio.run(cloud.run())
+        return
+
+    if agent_role == "local":
+        # Delegate entirely to the Local Agent
+        print("[Orchestrator] AGENT_ROLE=local -> delegating to local/local_agent.py")
+        from local.local_agent import LocalAgent
+        local = LocalAgent(
+            dry_run=args.dry_run,
+            interval=args.interval,
+            run_once=args.once,
+        )
+        local.run()
+        return
+
+    # AGENT_ROLE not set (or "gold") → fall through to original Gold-tier loop
+    if agent_role and agent_role not in ("gold",):
+        print(f"[Orchestrator] Unknown AGENT_ROLE={agent_role!r} — falling back to Gold tier")
 
     # Ensure all Gold-tier folders exist
     for folder in [

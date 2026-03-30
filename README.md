@@ -1,58 +1,87 @@
-# Personal AI Employee — Gold Tier
+# Personal AI Employee — Platinum Tier
 
-A personal AI employee that monitors Gmail, files, and social media; manages business accounting via Odoo; autonomously generates weekly CEO briefings; and executes all sensitive actions through a Human-in-the-Loop approval layer. Built on Claude Code with three custom MCP servers.
+A personal AI employee that runs 24/7 across two machines: a Cloud Agent on AWS EC2 and a Local Agent on Windows PC. It monitors Gmail, files, and social media; manages business accounting via Odoo; autonomously generates weekly CEO briefings; drafts all content for human approval; and executes sends only after explicit sign-off. Built on Claude Code with three custom MCP servers and a Git-synced Obsidian vault as the communication backbone.
 
 ## Tier
 
-**Gold** — Full cross-domain integration (personal + business), 3 MCP servers, Odoo accounting, social media automation, autonomous CEO Briefing, structured audit logging, and graceful error recovery.
+**Platinum** — Two-agent distributed system (AWS EC2 + Windows PC), 3 MCP servers, Odoo 19 on EC2 with HTTPS, Git-based vault sync, claim-by-move concurrency control, structured audit logging, graceful error recovery, and the Platinum demo flow: email → Cloud draft → human approval → Local send → audit log → Done.
 
 ---
 
 ## Architecture
 
 ```
-External Sources
-┌────────────────────────────────────────────────┐
-│  Gmail │ Files │ Facebook │ Instagram │ Twitter │
-└────┬───────┬──────────┬─────────┬────────┬─────┘
-     │       │          │         │        │
-┌────▼───────▼──────────▼─────────▼────────▼─────┐
-│              Watchers + Schedulers               │
-│     Gmail │ Filesystem │ Cron (social/odoo)      │
-└──────────────────┬──────────────────────────────┘
-                   │ Creates .md files
-┌──────────────────▼──────────────────────────────┐
-│              Obsidian Vault                      │
-│  /Needs_Action → /Plans → /Pending_Approval     │
-│  Dashboard.md │ Handbook │ Business_Goals        │
-│  /Accounting │ /Briefings │ /Social_Media │ /Logs│
-└──────────────────┬──────────────────────────────┘
-                   │
-┌──────────────────▼──────────────────────────────┐
-│              Claude Code + Agentic Loop          │
-│        Read → Think → Plan → Act → Iterate       │
-└──────┬──────────┬────────────┬──────────────────┘
-       │          │            │
-┌──────▼───┐ ┌───▼────┐ ┌────▼───────────┐
-│ Gmail MCP│ │Odoo MCP│ │Social Media MCP│
-│(email)   │ │(acctg) │ │(FB/IG/Twitter) │
-└──────────┘ └────────┘ └────────────────┘
-       │
-┌──────▼──────────────────────────────────────────┐
-│              HITL Layer                          │
-│  /Pending_Approval → Human Review → /Approved   │
-└─────────────────────────────────────────────────┘
+                        PLATINUM TWO-AGENT SYSTEM
+                        ═══════════════════════════
+
+  AWS EC2 (Cloud Agent)              GitHub Repo              Windows PC (Local Agent)
+  ──────────────────────        ─────────────────────        ──────────────────────────
+                                │                   │
+  Gmail watcher (2min) ─────── │  git push (5min)  │ ──────  git pull (10min)
+  Social drafts (30min) ──────►│                   │◄──────  vault_sync.bat
+  Odoo read + /Updates ───────►│  Vault = source   │◄──────  Dashboard.md (owner)
+  Heartbeat → /Signals ───────►│    of truth       │◄──────  Execute /Approved
+  systemd 24/7 uptime  ─────── │                   │ ──────  Task Scheduler
+                                └─────────────────────
+                                          │
+                         ┌────────────────┴────────────────┐
+                         │         Obsidian Vault          │
+                         │                                 │
+                         │  /Needs_Action → /In_Progress   │
+                         │  /Pending_Approval → /Approved  │
+                         │  /Updates → Dashboard.md        │
+                         │  /Signals  (heartbeat, alerts)  │
+                         │  /Logs/audit.jsonl              │
+                         └─────────────────────────────────┘
+
+  External Sources                                     MCP Servers (Local only)
+  ────────────────                                     ────────────────────────
+  Gmail    ──► Cloud reads, drafts replies             email-mcp   (send/draft/search)
+  Files    ──► Cloud creates action items              odoo        (read auto / write HITL)
+  Facebook ──► Cloud generates drafts                 social-media (post HITL / read auto)
+  Instagram──► Cloud generates drafts
+  Twitter  ──► Cloud generates drafts
+  Odoo ERP ──► Cloud reads → /Updates → Local merges → Dashboard.md
 ```
 
 ---
 
-## Gold Tier Components
+## Two-Agent Specialization
+
+| Capability | Cloud Agent (EC2) | Local Agent (Windows) |
+|-----------|-------------------|-----------------------|
+| Run 24/7 | Yes (systemd) | Via Task Scheduler |
+| Read Gmail | Yes | No |
+| Draft email replies | Yes → /Pending_Approval | No |
+| Send email | **NO** | Yes (after approval) |
+| Generate social drafts | Yes → /Pending_Approval | No |
+| Post to social media | **NO** | Yes (after approval) |
+| Read Odoo data | Yes → /Updates | Via Local MCP |
+| Write to Odoo | **NO** | Yes (after approval) |
+| Update Dashboard.md | **NO** (writes /Updates) | Yes (single-writer) |
+| Execute /Approved files | **NO** | Yes |
+| Monitor Cloud heartbeat | No | Yes |
+
+---
+
+## Platinum Components
+
+| Component | Location | Description |
+|-----------|----------|-------------|
+| **Cloud Agent** | `cloud/cloud_agent.py` | asyncio loop — Gmail, Odoo reads, social drafts, vault sync |
+| **Local Agent** | `local/local_agent.py` | Sync cycle — merge /Updates, notify pending, execute approved |
+| **Health Monitor** | `cloud/cloud_health_monitor.py` | Watchdog: restarts cloud_agent if dead (`--once` for cron) |
+| **Vault Sync (Cloud)** | `scripts/vault_sync_cloud.sh` | git pull + push every 5 min via cron on EC2 |
+| **Vault Sync (Local)** | `scripts/vault_sync.bat` | git pull + push every 10 min via Task Scheduler |
+| **Odoo on EC2** | `odoo-cloud/docker-compose.yml` | Odoo 19 + PostgreSQL 16 + Nginx HTTPS (self-signed) |
+| **Odoo Backup** | `odoo-cloud/backup.sh` | Daily pg_dump at 2 AM, keeps last 7 |
+| **Orchestrator** | `orchestrator.py` | AGENT_ROLE dispatch — delegates to Cloud or Local agent |
+| **Platinum Demo** | `tests/platinum_demo.py` | End-to-end 18-step demo with verify mode |
+
+### Gold Tier Components (still active)
 
 | Component | Description |
 |-----------|-------------|
-| **File Watcher** | Monitors `~/AI_Drop`, creates action items in `/Needs_Action` |
-| **Gmail Watcher** | Monitors inbox, classifies priority, creates `EMAIL_*.md` |
-| **Orchestrator** | Polls `/Needs_Action`, `/Approved`, `/Social_Media` every 30s; health checks every 5min |
 | **Email MCP** | Send/draft/search Gmail via SMTP + API (HITL for sending) |
 | **Odoo MCP** | Invoice, payment, balance queries via XML-RPC (HITL for writes) |
 | **Social Media MCP** | Post to Facebook, Instagram, Twitter/X via APIs (HITL always) |
@@ -61,7 +90,7 @@ External Sources
 | **Agentic Loop** | Multi-step autonomous task execution via `--max-turns` |
 | **Error Recovery** | Retry with backoff, graceful degradation, URGENT alerts |
 | **Audit Logger** | JSON Lines structured log of every action (`/Logs/audit.jsonl`) |
-| **Scheduler** | Windows Task Scheduler / cron for all Gold-tier routines |
+| **Scheduler** | Windows Task Scheduler + EC2 cron for all scheduled routines |
 
 ---
 
@@ -70,70 +99,74 @@ External Sources
 | Component | Purpose |
 |-----------|---------|
 | Claude Code | AI processing, planning, task execution, agentic loops |
-| Obsidian | Vault interface, dashboard viewing |
-| Python + watchdog | Filesystem monitoring |
+| AWS EC2 t2.micro | Cloud Agent VM (Free Tier, Ubuntu 22.04) |
+| systemd | Cloud Agent 24/7 service management |
+| Obsidian | Vault interface, dashboard, approval workflow |
+| Git + GitHub | Inter-agent communication and state sync |
+| Python 3.13 + asyncio | Cloud Agent concurrent task scheduling |
+| FastMCP | Custom MCP servers (email, Odoo, social media) |
+| Docker Compose | Odoo 19 + PostgreSQL 16 + Nginx on EC2 |
 | Gmail API + SMTP | Email monitoring and sending |
 | Odoo 19 Community | ERP: accounting, invoicing, contacts |
-| FastMCP | Custom MCP servers (email, Odoo, social media) |
 | Playwright | LinkedIn browser automation |
 | tweepy | Twitter/X API v2 |
 | requests | Facebook Graph API, Instagram API |
 | xmlrpc.client | Odoo XML-RPC connection |
-| Docker Compose | Odoo + PostgreSQL local deployment |
-| Windows Task Scheduler / cron | Scheduled Gold-tier routines |
-| python-dotenv | Environment variable management |
+| psutil | Cloud health monitor process detection |
+| Windows Task Scheduler | Local Agent scheduling |
+| python-dotenv | Per-agent environment variable management |
 
 ---
 
 ## Prerequisites
 
+**Local PC (Windows):**
 - Claude Code CLI (latest)
 - Python 3.13+
 - `uv` (Python package manager)
 - Obsidian
-- Docker Desktop (for Odoo)
-- Gmail account with API access
-- LinkedIn account (for posting)
-- Facebook Page + Instagram Business account (optional)
-- Twitter/X Developer account (optional)
+- Docker Desktop (optional — Odoo can also run on EC2)
+- Git with GitHub access
+
+**AWS EC2 (Ubuntu 22.04):**
+- Free Tier t2.micro instance
+- Python 3.13, Node.js 24, Docker, Git, UV, Claude Code
+- GitHub Personal Access Token (for private repo clone)
+- See `docs/aws-cloud-setup.md` for full setup guide
 
 ---
 
 ## Quick Start
 
-### 1. Clone and Install
+### 1. Clone and Install (Local PC)
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/IzmaIkhlaque/AI-Employee-Gold-Tier.git AI_Employee_Vault
 cd AI_Employee_Vault
-
-# Install all Python dependencies
 uv sync
-
-# Install Playwright browser for LinkedIn
 playwright install chromium
 ```
 
-### 2. Configure Environment
+### 2. Configure Local .env
 
 ```bash
 cp .env.example .env
 ```
 
-Edit `.env` with your credentials:
-
 ```env
+# Agent identity
+AGENT_ROLE=local
+
 # Email
 SMTP_USER=you@gmail.com
 SMTP_PASSWORD=your-app-password
 
-# Odoo
-ODOO_URL=http://localhost:8069
+# Odoo (on EC2 or localhost)
+ODOO_URL=http://YOUR_EC2_IP:8069
 ODOO_DB=ai_employee_db
-ODOO_LOGIN=you@gmail.com
-ODOO_PASSWORD=your-odoo-password
+ODOO_API_KEY=your_odoo_api_key
 
-# Social Media (optional — dry-run mode activates if absent)
+# Social Media (optional — dry-run activates if absent)
 FB_PAGE_ACCESS_TOKEN=...
 FB_PAGE_ID=...
 IG_USER_ID=...
@@ -144,107 +177,83 @@ TWITTER_ACCESS_TOKEN_SECRET=...
 SOCIAL_DRY_RUN=false
 ```
 
-### 3. Start Odoo (Docker)
+### 3. Register MCP Servers (Local)
 
 ```bash
-# From the Odoo install directory
-docker compose up -d
-
-# First-time setup: create database
-# Visit http://localhost:8069 → create DB → set master password
-# See docs/odoo-setup.md for full walkthrough
-```
-
-Verify connection:
-
-```bash
-python -c "
-import xmlrpc.client
-c = xmlrpc.client.ServerProxy('http://localhost:8069/xmlrpc/2/common')
-print(c.version())
-"
-```
-
-### 4. Gmail API Setup
-
-```bash
-./scripts/setup_gmail_mcp.sh
-# Or follow .claude/skills/gmail-setup/SKILL.md
-```
-
-1. Go to [Google Cloud Console](https://console.cloud.google.com)
-2. Create project → Enable Gmail API
-3. Create OAuth 2.0 credentials (Desktop App)
-4. Download as `config/credentials.json`
-5. Run Gmail watcher once to complete OAuth flow
-
-### 5. Register MCP Servers
-
-```bash
-# Email
 claude mcp add email-mcp -- uv run python mcp_servers/email_server.py
-
-# Odoo (uses .env credentials automatically)
 claude mcp add odoo -- uv run python mcp_servers/odoo_server.py
-
-# Social Media
 claude mcp add social-media -- uv run python mcp_servers/social_media_server.py
-
-# Verify all three
 claude mcp list
 ```
 
-### 6. Social Media API Setup
-
-See `docs/social-media-setup.md` for step-by-step guides. Summary:
-
-- **Facebook:** Create App → add Page token → set `FB_PAGE_ACCESS_TOKEN` + `FB_PAGE_ID`
-- **Instagram:** Connect Business account → set `IG_USER_ID`
-- **Twitter/X:** Apply for Elevated access → create Project + App with Read+Write → set all 4 keys
-- **Dry-run:** Leave credentials blank — all posts log to console without calling the API
-
-### 7. Open in Obsidian
+### 4. Open in Obsidian
 
 ```
 File → Open Vault → Select AI_Employee_Vault folder
 ```
 
-### 8. Start the Orchestrator
+### 5. Deploy Cloud Agent on EC2
+
+Follow `docs/aws-cloud-setup.md` completely. Summary:
 
 ```bash
-# Continuous monitoring (all 3 folders + health checks every 5 min)
-python orchestrator.py
+# SSH into EC2
+ssh -i "D:\aws-keys\ai-employee-key.pem" ubuntu@YOUR_EC2_IP
 
-# Dry run — logs actions but doesn't call Claude
-python orchestrator.py --dry-run
+# After setup_ec2_services.sh:
+cd ~/AI_Employee_Vault
+bash cloud/setup_ec2_services.sh
 
-# Custom intervals
-python orchestrator.py --interval 60 --health-check-interval 120
+# Start Odoo
+cd ~/odoo-cloud && docker compose up -d
+
+# Verify
+sudo systemctl status ai-employee-cloud
 ```
 
-### 9. Set Up Scheduled Tasks (Windows)
+### 6. Configure EC2 .env
+
+```bash
+nano ~/AI_Employee_Vault/.env
+```
+
+```env
+AGENT_ROLE=cloud
+ODOO_URL=http://localhost:8069
+ODOO_DB=ai_employee_db
+ODOO_API_KEY=your_key
+SOCIAL_DRY_RUN=true
+```
+
+### 7. Copy Gmail Credentials to EC2 (SCP — never via git)
 
 ```powershell
-# Run as Administrator — creates all 7 Task Scheduler tasks
-# See docs/windows-scheduler-setup.md for the full PowerShell block
+scp -i "D:\aws-keys\ai-employee-key.pem" config\credentials.json ubuntu@YOUR_EC2_IP:~/AI_Employee_Vault/config/
+scp -i "D:\aws-keys\ai-employee-key.pem" config\token.json ubuntu@YOUR_EC2_IP:~/AI_Employee_Vault/config/
 ```
 
-| Task | Time | Days |
-|------|------|------|
-| Odoo Sync | 7:00 AM | Daily |
-| CEO Briefing | 7:00 AM | Monday |
-| Daily Routine | 8:00 AM | Daily |
-| LinkedIn Draft | 9:00 AM | Mon/Wed/Fri |
-| Social Batch | 10:00 AM | Tue/Thu |
-| Health Check | 6:00 AM | Daily |
-| Weekly Audit | 6:00 PM | Sunday |
+### 8. Set Up Windows Task Scheduler (Local)
 
-### 10. Run Your First CEO Briefing
+```powershell
+# Run as Administrator — see docs/windows-scheduler-platinum.md for full block
+# Creates: AI-LocalAgent, AI-VaultSync (every 10 min)
+#          AI-Daily-Morning, AI-CEO-Briefing
+```
+
+### 9. Run the Platinum Demo
 
 ```bash
-scripts\scheduler.bat ceo-briefing
-# Output: /Briefings/CEO_BRIEFING_YYYYMMDD.md
+# Simulate Cloud side (or run on actual EC2)
+python tests/platinum_demo.py --mode cloud --demo-id demo01
+
+# Simulate Local side (after vault sync)
+python tests/platinum_demo.py --mode local --demo-id demo01
+
+# Verify everything passed
+python tests/platinum_demo.py --mode verify --demo-id demo01
 ```
+
+See `docs/platinum-demo-walkthrough.md` for the screen-by-screen recording guide.
 
 ---
 
@@ -252,62 +261,84 @@ scripts\scheduler.bat ceo-briefing
 
 ```
 AI_Employee_Vault/
-├── Inbox/                    # Raw incoming items
-├── Needs_Action/             # Items ready for processing
-├── Plans/                    # Multi-step execution plans
-├── Pending_Approval/         # Actions awaiting human approval
-├── Approved/                 # Human-approved, ready to execute
-├── Rejected/                 # Human-rejected (archive only)
-├── Drafts/                   # Email/content drafts
-├── Done/                     # Completed and archived items
 │
-├── Accounting/               # [Gold] Odoo financial snapshots
-│   └── Current_Month.md      #   Invoice/payment totals, synced daily
-├── Briefings/                # [Gold] Autonomous reports
-│   ├── CEO_BRIEFING_*.md     #   Monday morning business intelligence
-│   └── WEEKLY_AUDIT_*.md     #   Sunday week-in-review
-├── Social_Media/             # [Gold] Post records by platform
-│   ├── Facebook/
-│   ├── Instagram/
-│   └── Twitter/
-├── Logs/                     # [Gold] Structured logs
-│   ├── audit.jsonl           #   Every AI action (JSON Lines)
-│   └── errors.jsonl          #   Error log with severity + recovery steps
+├── Inbox/                      # Raw incoming items
+├── Needs_Action/               # Items ready for processing
+│   ├── email/                  # [Platinum] Cloud-created email items
+│   ├── social/                 # [Platinum] Social media items
+│   └── accounting/             # Accounting action items
+├── In_Progress/                # [Platinum] Claimed items
+│   ├── cloud/                  #   Items owned by Cloud Agent
+│   └── local/                  #   Items owned by Local Agent
+├── Plans/                      # Multi-step execution plans
+│   ├── email/ │ social/ │ accounting/
+├── Pending_Approval/           # Actions awaiting human review
+│   ├── email/                  #   [Platinum] Cloud-drafted email replies
+│   ├── social/                 #   [Platinum] Cloud-drafted social posts
+│   └── accounting/             #   [Platinum] Cloud-requested Odoo writes
+├── Approved/                   # Human-approved, ready to execute
+├── Rejected/                   # Human-rejected (archive only)
+├── Done/                       # Completed and archived items
 │
-├── memory/                   # Persistent state files
-│   ├── orchestrator_state.json
-│   ├── gmail_processed_ids.json
-│   └── scheduler_logs/
-├── config/                   # Credentials and tokens
-│   ├── credentials.json      #   Gmail OAuth client
-│   └── token.json            #   Gmail OAuth token (auto-generated)
+├── Updates/                    # [Platinum] Cloud writes, Local reads + merges
+├── Signals/                    # [Platinum] Heartbeat, review alerts, urgent signals
+│   └── cloud_heartbeat.md      #   Rewritten every 5 min by Cloud Agent
 │
-├── watchers/                 # Folder monitors
-│   ├── base_watcher.py
+├── Accounting/                 # [Gold] Odoo financial snapshots
+│   └── Current_Month.md
+├── Briefings/                  # [Gold] Autonomous reports
+│   ├── CEO_BRIEFING_*.md
+│   └── WEEKLY_AUDIT_*.md
+├── Social_Media/               # [Gold] Post records by platform
+│   ├── Facebook/ │ Instagram/ │ Twitter/
+├── Logs/                       # [Gold] Structured logs
+│   ├── audit.jsonl             #   Every AI action (JSON Lines)
+│   └── errors.jsonl            #   Error log with severity + recovery
+│
+├── cloud/                      # [Platinum] Cloud Agent
+│   ├── cloud_agent.py          #   asyncio agent — main loop
+│   ├── cloud_health_monitor.py #   Watchdog process
+│   ├── ai-employee-cloud.service # systemd unit file
+│   ├── setup_ec2_services.sh   #   One-command EC2 setup
+│   └── CLAUDE.md               #   Cloud Agent identity + rules
+├── local/                      # [Platinum] Local Agent
+│   └── local_agent.py          #   Sync + execute loop
+├── odoo-cloud/                 # [Platinum] Odoo on EC2
+│   ├── docker-compose.yml      #   Odoo 19 + PostgreSQL 16 + Nginx
+│   ├── nginx.conf              #   HTTPS reverse proxy
+│   ├── backup.sh               #   Daily pg_dump
+│   └── ssl/                    #   Self-signed certs (not in git)
+├── tests/                      # [Platinum] Demo and tests
+│   └── platinum_demo.py        #   18-step end-to-end demo
+│
+├── mcp_servers/                # Custom MCP server implementations
+│   ├── email_server.py
+│   ├── odoo_server.py
+│   └── social_media_server.py
+├── utils/                      # Shared Python utilities
+│   ├── audit_logger.py
+│   └── error_handler.py
+├── watchers/                   # Folder monitors (Gold/local mode)
 │   ├── filesystem_watcher.py
 │   └── gmail_watcher.py
-├── mcp_servers/              # Custom MCP server implementations
-│   ├── email_server.py       #   Gmail SMTP + API
-│   ├── odoo_server.py        #   Odoo 19 XML-RPC [Gold]
-│   └── social_media_server.py#   FB/IG/Twitter [Gold]
-├── utils/                    # Shared Python utilities [Gold]
-│   ├── audit_logger.py       #   AuditLogger class
-│   └── error_handler.py      #   ErrorHandler + ErrorSeverity
-├── scripts/                  # Automation scripts
-│   ├── scheduler.bat         #   Windows Task Scheduler commands [Gold]
-│   ├── scheduler.sh          #   Linux/macOS cron commands
-│   └── linkedin_poster.py    #   Playwright LinkedIn automation
-├── docs/                     # Documentation
-│   ├── odoo-setup.md         #   Odoo Docker setup guide
-│   ├── social-media-setup.md #   FB/IG/Twitter API setup
-│   └── windows-scheduler-setup.md  # Task Scheduler configuration
+├── scripts/                    # Automation scripts
+│   ├── vault_sync.bat          #   [Platinum] Local git pull+push
+│   ├── vault_sync_cloud.sh     #   [Platinum] Cloud git pull+push
+│   ├── scheduler.bat           #   [Gold] Windows scheduled commands
+│   └── linkedin_poster.py      #   Playwright LinkedIn automation
+├── docs/
+│   ├── how-to-run.md           #   Complete start/stop/verify guide
+│   ├── aws-cloud-setup.md      #   EC2 setup (every click)
+│   ├── platinum-demo-walkthrough.md  # Screen-by-screen demo guide
+│   ├── windows-scheduler-platinum.md # Platinum Task Scheduler setup
+│   └── windows-scheduler-setup.md   # Gold Task Scheduler setup
 │
-├── .claude/skills/           # Agent skills (invoked by Claude)
-├── orchestrator.py           # Gold-tier folder monitor + health check
-├── Dashboard.md              # Real-time system status
-├── Company_Handbook.md       # Rules, approval policies, priorities
-├── Business_Goals.md         # Content strategy, Q1 goals, brand voice
-└── CLAUDE.md                 # Claude Code operating instructions
+├── .claude/skills/             # Agent skills
+├── orchestrator.py             # AGENT_ROLE dispatch + Gold-tier loop
+├── Dashboard.md                # Real-time system status (Local owns)
+├── Company_Handbook.md         # Rules, work-zone rules, approval policies
+├── Business_Goals.md           # Content strategy, Q1 goals, brand voice
+└── CLAUDE.md                   # Claude Code operating instructions (all tiers)
 ```
 
 ---
@@ -339,64 +370,93 @@ AI_Employee_Vault/
 | `error-recovery` | Retry logic, fallback actions, URGENT alert creation |
 | `audit-logger` | Standard vocabulary + usage guide for `/Logs/audit.jsonl` |
 
+### Platinum (Two-Agent System)
+| Skill | Agent | Description |
+|-------|-------|-------------|
+| `vault-sync` | Both | Git sync, conflict resolution, signal processing |
+| `local-agent` | Local | Approvals, executes sends, merges Dashboard, heartbeat |
+| `cloud-odoo` | Cloud | Read-only Odoo queries, write requests via /Pending_Approval |
+
 ---
 
 ## HITL Approval Workflow
 
-Every sensitive action passes through human review:
-
 ```
-Claude identifies action that needs approval
+Claude (Cloud or Local) identifies action needing approval
+                    │
+                    ▼
+   Creates PENDING_*.md in /Pending_Approval/{domain}/
+   (frontmatter: action, agent, priority, draft content)
+                    │
+              Cloud git push
+                    │
+              Local git pull
+                    │
+                    ▼
+        Human reviews in Obsidian
+                    │
+           ┌────────┴────────┐
+           │                 │
+       Moves to          Moves to
+       /Approved         /Rejected
+           │                 │
+           ▼                 ▼
+    Local Agent runs    Logged + archived
+    execution cycle     not retried
            │
            ▼
-Creates PENDING_*.md in /Pending_Approval
-  (with frontmatter: action, target, draft content)
-           │
-           ▼
-     Human reviews in Obsidian
-           │
-     ┌─────┴─────┐
-     │           │
-  Moves to    Moves to
-  /Approved   /Rejected
-     │           │
-     ▼           ▼
- Orchestrator  Logged +
- executes via  archived,
- MCP server    not retried
-     │
-     ▼
-Moved to /Done + audit logged
+    Sends via MCP → /Done → git push → audit logged
 ```
 
 **Actions that always require approval:**
 - Any outbound email
-- All social media posts (including replies)
+- All social media posts (including replies, comments)
 - All Odoo write operations (create/update)
 - File deletion
 - Any bulk operation
 
 ---
 
-## Scheduled Tasks
+## Platinum Demo (Minimum Passing Gate)
 
-| Task | Command | Time | Days |
-|------|---------|------|------|
-| Odoo Sync | `scheduler.bat odoo-sync` | 7:00 AM | Daily |
-| CEO Briefing | `scheduler.bat ceo-briefing` | 7:00 AM | Monday |
-| Daily Routine | `scheduler.bat daily` | 8:00 AM | Daily |
-| LinkedIn Draft | `scheduler.bat linkedin` | 9:00 AM | Mon/Wed/Fri |
-| Social Batch | `scheduler.bat social-batch` | 10:00 AM | Tue/Thu |
-| Health Check | `scheduler.bat health-check` | 6:00 AM | Daily |
-| Weekly Audit | `scheduler.bat weekly-audit` | 6:00 PM | Sunday |
+```
+Step 1:  Local goes "offline" (Task Scheduler paused)
+Step 2:  Test email arrives in Gmail inbox
+Step 3:  Cloud Agent detects it via Gmail watcher
+Step 4:  Cloud creates /Needs_Action/email/EMAIL_test_{id}.md
+Step 5:  Cloud moves to /In_Progress/cloud/ (claim-by-move)
+Step 6:  Cloud drafts a professional reply via Claude
+Step 7:  Cloud saves to /Pending_Approval/email/REPLY_test_{id}.md
+Step 8:  Cloud git push → draft is in GitHub
+Step 9:  Local comes back online, runs vault_sync.bat (git pull)
+Step 10: Local reads /Pending_Approval — draft is here
+Step 11: Human opens Obsidian, reviews draft
+Step 12: Human drags file to /Approved/
+Step 13: Local Agent detects /Approved file
+Step 14: Local sends email via Gmail MCP (send_email)
+Step 15: Local logs to /Logs/audit.jsonl
+Step 16: Local moves to /Done/DONE_REPLY_test_{id}.md
+Step 17: Local git push — completion synced to Cloud
+Step 18: Verify: audit log ✓ | /Done has file ✓ | email sent ✓
+```
 
-See `docs/windows-scheduler-setup.md` for setup instructions.
+```bash
+# Run the demo
+python tests/platinum_demo.py --mode cloud --demo-id demo01
+python tests/platinum_demo.py --mode local --demo-id demo01
+python tests/platinum_demo.py --mode verify --demo-id demo01
+
+# Safe dry-run (no email sent)
+python tests/platinum_demo.py --dry-run
+```
+
+See `docs/platinum-demo-walkthrough.md` for the screen-by-screen video recording guide.
 
 ---
 
 ## MCP Servers
 
-### Email MCP (`email-mcp`) — Silver
+### Email MCP (`email-mcp`)
 
 | Tool | Purpose | Approval |
 |------|---------|----------|
@@ -406,7 +466,7 @@ See `docs/windows-scheduler-setup.md` for setup instructions.
 | `get_email_logs` | View action logs | Auto |
 | `check_smtp_status` | Test SMTP connection | Auto |
 
-### Odoo MCP (`odoo`) — Gold
+### Odoo MCP (`odoo`)
 
 | Tool | Purpose | Approval |
 |------|---------|----------|
@@ -417,9 +477,10 @@ See `docs/windows-scheduler-setup.md` for setup instructions.
 | `get_payments` | List recent payments | Auto |
 | `get_account_balances` | Chart of accounts snapshot | Auto |
 
-Write operations (create/update): **HITL required.** Delete: **never.**
+Write operations: **HITL required** (Cloud creates request in /Pending_Approval/accounting/).
+Delete: **never exposed.**
 
-### Social Media MCP (`social-media`) — Gold
+### Social Media MCP (`social-media`)
 
 | Tool | Purpose | Approval |
 |------|---------|----------|
@@ -432,13 +493,50 @@ Write operations (create/update): **HITL required.** Delete: **never.**
 | `social_media_status` | Check credentials + dry-run | Auto |
 | `generate_social_summary` | Weekly engagement summary | Auto |
 
-Dry-run mode activates automatically when API credentials are absent.
+Dry-run mode activates automatically when credentials are absent.
+
+---
+
+## Scheduled Tasks
+
+### EC2 Cron (Cloud Agent)
+
+| Schedule | Task |
+|----------|------|
+| Every 5 min | `vault_sync_cloud.sh` — git pull + push |
+| Every 10 min | `cloud_health_monitor.py --once` |
+| 2:00 AM daily | `backup.sh` — Odoo pg_dump |
+| Sunday 6 PM UTC | CEO briefing data prep |
+
+### Windows Task Scheduler (Local Agent)
+
+| Schedule | Task |
+|----------|------|
+| Every 10 min | `local_agent.py --once` — full sync + execute cycle |
+| Every 10 min | `vault_sync.bat` — git pull + push (independent of agent) |
+| Daily 8:00 AM | `scheduler.bat daily` |
+| Monday 7:00 AM | `scheduler.bat ceo-briefing` |
+| Mon/Wed/Fri 9 AM | `scheduler.bat linkedin` |
+| Tue/Thu 10 AM | `scheduler.bat social-batch` |
+| Daily 6:00 AM | `scheduler.bat health-check` |
+| Sunday 6:00 PM | `scheduler.bat weekly-audit` |
+
+---
+
+## Security Notes
+
+- **Credentials:** Each agent has its own `.env` (gitignored) — secrets never cross via git
+- **SCP only:** Gmail OAuth files (`credentials.json`, `token.json`) copied to EC2 via SCP
+- **Self-signed TLS:** Odoo on EC2 served over HTTPS (self-signed cert, not in git)
+- **App Passwords:** Gmail uses App Passwords, not account passwords
+- **HITL hardcoded:** Approval workflow cannot be bypassed programmatically
+- **Odoo deletes:** Blocked at the MCP layer — no delete tools exposed
+- **Audit trail:** Every action timestamped and component-tagged in `/Logs/audit.jsonl`
+- **Claim-by-move:** Atomic filesystem move prevents both agents processing same item
 
 ---
 
 ## Error Handling
-
-All components share `utils/error_handler.py`:
 
 | Severity | Trigger | Auto-action |
 |----------|---------|-------------|
@@ -448,42 +546,8 @@ All components share `utils/error_handler.py`:
 | `CRITICAL` | Binary missing, data loss risk | Halt + create URGENT item |
 | `EXTERNAL` | Third-party API down | Degrade gracefully, continue loop |
 
-One component failure never crashes the orchestrator — each call is wrapped in `handler.catch()`.
-
----
-
-## Audit Logging
-
-Every AI action is logged to `/Logs/audit.jsonl` (JSON Lines format):
-
-```json
-{
-  "ts": "2026-03-03T07:00:00.123456",
-  "action": "email_received",
-  "component": "gmail_watcher",
-  "actor": "claude",
-  "target": "EMAIL_invoice_request_20260303.md",
-  "details": {"from": "client@example.com", "priority": "high"},
-  "status": "success",
-  "duration_ms": 142,
-  "approval_required": false,
-  "approval_status": ""
-}
-```
-
-The CEO Briefing reads this log to produce email counts, task summaries, and system health metrics.
-
----
-
-## Security Notes
-
-- **Credentials:** Stored in `.env` (gitignored) — never committed
-- **App Passwords:** Use Gmail App Passwords, not account passwords
-- **OAuth tokens:** Stored in `config/token.json` — gitignored
-- **Approval Workflow:** Hard-coded; cannot be bypassed programmatically
-- **Odoo deletes:** Blocked at the MCP layer — no delete tools exposed
-- **Social posts:** Dry-run activates automatically if credentials missing
-- **Audit trail:** Every action timestamped in `/Logs/audit.jsonl`
+Cloud Agent: one task failure never kills the asyncio loop — each task runs inside `handler.catch()`.
+Local Agent: one step failure never stops the cycle — each step wrapped independently.
 
 ---
 
@@ -491,43 +555,49 @@ The CEO Briefing reads this log to produce email counts, task summaries, and sys
 
 ### What Worked Well
 
-**Vault-as-interface was the right choice.** Using Obsidian markdown files as the communication layer between Claude and the human operator meant zero custom UI code. The HITL workflow — moving a file from `/Pending_Approval` to `/Approved` — is as simple as dragging in a file explorer. No buttons, no forms, no web server.
+**Git-as-message-bus was the right Platinum architecture.** Using the GitHub repository as the only communication channel between Cloud and Local agents meant no open ports, no shared secrets between machines, no WebSockets, no queues. The vault files are the API. Git push/pull is the transport. Conflict resolution rules are in plain text.
 
-**FastMCP made server creation fast.** Each MCP server (`email_server.py`, `odoo_server.py`, `social_media_server.py`) was a single Python file with decorated functions. Adding a new tool took under 10 minutes.
+**Claim-by-move solved the double-processing problem cleanly.** `shutil.move()` on the same filesystem is atomic. The first agent to move a file to `/In_Progress/{agent}/` wins. No locks, no databases, no coordination protocol needed.
 
-**CLAUDE.md as operating system.** Writing detailed instructions into `CLAUDE.md` and `Company_Handbook.md` meant Claude consistently followed the same workflow across every session. The AI Employee's "personality" and decision-making framework lived in plain text files — version-controlled and human-readable.
+**systemd + cron is the right 24/7 stack for EC2.** systemd handles restart-on-crash and boot-time startup. Cron handles periodic tasks with the right frequency per task. The health monitor (`--once` from cron every 10 min) provides a second layer of protection without the complexity of a supervisor process.
 
-**Dry-run by default.** Building dry-run mode into every component (watchers, MCP servers, orchestrator) from day one meant the system could be tested safely before any real credentials were added. This eliminated a whole class of accidental-send bugs.
+**Separating draft from execute reduced risk dramatically.** The Cloud Agent can draft a reply to 100 emails while Local is offline. When Local comes back, the human reviews all drafts in one Obsidian session and approves/rejects each. No emails are sent during the Cloud's unattended operation.
+
+**Vault-as-interface was the right choice from Bronze onwards.** The HITL workflow — drag a file from `/Pending_Approval` to `/Approved` in Obsidian — requires zero custom UI. Every tier inherited this naturally.
 
 ### Challenges and How They Were Solved
 
-**Odoo authentication took multiple rounds.** The `mcp-server-odoo` package (all versions) used a non-standard `/mcp/xmlrpc/common` endpoint that requires an Odoo module not present in Community Edition. Diagnosed by reading the full stack trace, then replaced with a custom `odoo_server.py` using the standard `/xmlrpc/2/` path. Lesson: always verify which API path a package hits before assuming it works.
+**Odoo authentication took multiple rounds.** The published `mcp-server-odoo` package used a non-standard endpoint requiring a module not in Community Edition. Diagnosed via stack trace, replaced with custom `odoo_server.py` using standard `/xmlrpc/2/` path. Lesson: `curl` the API path before integrating any package.
 
-**Docker volume / password desync.** After resetting the Odoo DB password in the UI, connections kept failing because the volume had been initialized with a different password. Fixed by running `ALTER USER odoo WITH PASSWORD '...'` directly inside the Postgres container. Lesson: docker volumes carry state that survives container restarts — always check the volume's original init values.
+**Docker volume / password desync.** After resetting the Odoo DB password in the UI, connections kept failing — the volume retained the original init password. Fixed with `ALTER USER odoo WITH PASSWORD '...'` inside the Postgres container. Lesson: Docker volumes carry state that survives restarts.
 
-**Windows cp1252 encoding.** Several unicode characters (`→`, `✓`, emoji) in print statements caused `UnicodeEncodeError` on Windows. Fixed by replacing all unicode symbols with ASCII equivalents in console output. Lesson: develop on the same OS you'll deploy to, or set `PYTHONIOENCODING=utf-8` in the environment.
+**Windows cp1252 encoding.** Unicode characters (`→`, `✓`, emoji) in print statements caused `UnicodeEncodeError` on Windows. Fixed by replacing all unicode symbols with ASCII in console output. Lesson: set `PYTHONIOENCODING=utf-8` in `.env` from day one.
 
-**HITL workflow friction.** Early versions required the human to create a new file in `/Approved` from scratch. Simplified by having Claude pre-fill the approval file with all necessary fields — the human only needs to move it, not edit it.
+**Health monitor cron pile-up.** The watchdog was written as a continuous loop. Running it from cron every 10 minutes stacked up processes. Fixed by adding `--once` flag — each cron invocation checks, optionally restarts, and exits. Lesson: cron scripts must exit; daemons must be managed by systemd.
+
+**Git conflict on Dashboard.md.** Both agents touching the same file caused merge conflicts. Fixed with the single-writer rule: Cloud writes only to `/Updates/`, Local is the only writer to `Dashboard.md`. Lesson: define ownership boundaries before writing the first line of agent code.
 
 ### Architecture Decisions and Trade-offs
 
-**One orchestrator process, not many.** Chose a single polling orchestrator over per-folder watchdog observers. Trade-off: 30-second polling latency vs. the simplicity of a single process with a single restart command. For a personal AI Employee, 30 seconds is acceptable.
+**One GitHub repo, not a message queue.** Trade-off: 5–10 minute latency between Cloud push and Local pull vs. zero infrastructure cost, zero auth complexity, full git history of every inter-agent message. For a personal AI Employee, 10 minutes is acceptable.
 
-**Flat markdown files over a database.** All state (processed IDs, approval status, audit log) lives in plain files. Trade-off: no query language, no transactions — but zero infrastructure, works offline, and is fully inspectable in Obsidian. The JSONL audit log provides enough structure for the metrics the CEO Briefing needs.
+**asyncio for Cloud Agent, sync loop for Local Agent.** Cloud Agent benefits from concurrent Gmail + Odoo + social tasks running in the same process. Local Agent's tasks are sequential by design (sync → merge → notify → execute) so a simple `time.sleep` loop is cleaner.
 
-**Custom Odoo MCP over the published package.** The custom `odoo_server.py` is ~200 lines and only exposes the 6 read tools we actually use. Trade-off: no automatic updates from upstream — but full control over error messages, connection handling, and the `.env` loading path.
+**Self-signed TLS for Odoo, not Let's Encrypt.** Trade-off: browser warning on first visit vs. no domain required, no cert renewal cron, no DNS configuration. For internal EC2 use only, self-signed is sufficient.
 
-**Health checks in Python, not via Claude.** The orchestrator health check runs pure Python (XML-RPC ping, socket connect, env var check) rather than calling `claude --print "check if Odoo is up"`. Trade-off: less natural language, but no API cost every 5 minutes and sub-second execution.
+**Flat markdown files over a database.** State lives in plain files — inspectable in Obsidian, version-controlled in git, zero infrastructure. The JSONL audit log provides enough structure for all metrics.
 
 ### What We Would Do Differently
 
-1. **Start with the Odoo MCP path problem.** We spent significant time on `mcp-server-odoo` before discovering the non-standard endpoint. A 5-minute `curl http://localhost:8069/mcp/xmlrpc/common` before integrating would have surfaced this immediately.
+1. **Define agent work-zone rules before writing any agent code.** We added the single-writer rule and claim-by-move after seeing conflicts in testing. These should be the first design decision, not a correction.
 
-2. **Set `PYTHONIOENCODING=utf-8` in the `.env` from day one** to avoid the Windows encoding issue showing up repeatedly in tests.
+2. **Set `PYTHONIOENCODING=utf-8` and `AGENT_ROLE` in `.env.example` from day one** so both issues surface immediately in local testing.
 
-3. **Write the `AuditLogger` before writing any other component.** We added audit logging as a Gold-tier addition, which meant retrofitting it into watchers and the orchestrator. Starting with logging infrastructure first would have made the CEO Briefing metrics more complete.
+3. **Write `AuditLogger` before any other component.** Retrofitting structured logging into existing watchers and the orchestrator was tedious. Starting with logging infrastructure makes every subsequent component's behaviour visible from the first run.
 
-4. **Generate the approval file template earlier.** The HITL workflow became much smoother once Claude pre-populated approval files. We would define the template in `Company_Handbook.md` at the Bronze tier and enforce it from the start.
+4. **Add `--once` flag to all long-running scripts at the time of writing**, not when cron integration surfaces the pile-up problem.
+
+5. **SCP the Gmail credentials on day one of the Cloud setup**, not as an afterthought. The Cloud Agent silently does nothing useful until `credentials.json` and `token.json` are present.
 
 ---
 

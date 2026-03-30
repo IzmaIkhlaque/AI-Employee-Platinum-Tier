@@ -36,6 +36,12 @@ node_modules/
 odoo-data/
 db-data/
 
+# Odoo cloud — SSL certs and runtime data (never commit)
+odoo-cloud/ssl/*.pem
+odoo-cloud/ssl/*.crt
+odoo-cloud/ssl/*.key
+~/odoo-backups/
+
 # Large files
 *.zip
 *.tar.gz
