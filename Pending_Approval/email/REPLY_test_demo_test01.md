@@ -3,7 +3,7 @@ type: approval_request
 action: email_reply
 to: demo-client@example.com
 subject: Re: AI Employee Platinum Demo — Service Inquiry
-created: 2026-04-02 23:58:57
+created: 2026-04-02 23:59:35
 priority: normal
 agent: cloud
 demo_id: demo_test01
@@ -14,7 +14,7 @@ status: pending
 
 **To:** demo-client@example.com
 **Subject:** Re: AI Employee Platinum Demo — Service Inquiry
-**Created:** 2026-04-02 23:58:57
+**Created:** 2026-04-02 23:59:35
 **Status:** Awaiting Review
 **Agent:** Cloud (drafted on EC2)
 
