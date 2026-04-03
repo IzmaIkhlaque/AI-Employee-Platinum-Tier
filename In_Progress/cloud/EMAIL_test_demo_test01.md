@@ -3,7 +3,7 @@ type: email_action
 action: email_reply
 from: demo-client@example.com
 subject: AI Employee Platinum Demo — Service Inquiry
-received: 2026-04-03 00:01:13
+received: 2026-04-03 00:05:30
 priority: normal
 agent: cloud
 demo_id: demo_test01
@@ -14,7 +14,7 @@ status: claimed
 
 **From:** demo-client@example.com
 **To:** izmarao99@gmail.com
-**Received:** 2026-04-03 00:01:13
+**Received:** 2026-04-03 00:05:30
 **Priority:** Normal
 
 ---
@@ -37,7 +37,7 @@ Demo Client
 
 ## Cloud Agent Notes
 
-- Detected by Gmail watcher at 2026-04-03 00:01:13
+- Detected by Gmail watcher at 2026-04-03 00:05:30
 - Classified as: service inquiry (medium priority)
 - Suggested action: draft professional reply
 - Cross-domain check: no matching Odoo customer found (new prospect)
