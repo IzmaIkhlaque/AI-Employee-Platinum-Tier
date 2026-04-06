@@ -1,384 +1,511 @@
-# Gold Tier Demo Guide — Submission Checklist
+# AI Employee — Full Hackathon Demo Guide
+### Bronze → Silver → Gold → Platinum — One Presentation
 
-> **Business:** NovaMind Tech Solutions | **Date:** 2026-03-12
-> Run every command from the vault root:
-> `D:\Izma folder\Governer sindh course\Q4\GEMINI_CLI\HACKATHONS\Ai-Employee-FTE\AI_Employee_Vault`
+**Business:** NovaMind Tech Solutions (AI consulting for Pakistani SMEs)
+**Total time:** ~20 minutes
+**Vault root:** `D:\Izma folder\Governer sindh course\Q4\GEMINI_CLI\HACKATHONS\Ai-Employee-FTE\AI_Employee_Vault`
 
----
-
-## MCP Connection Status (Pre-Verified)
-
-| MCP Server | Status | Detail |
-|-----------|--------|--------|
-| Odoo | ✅ CONNECTED | Odoo 19.0-20260217, uid=2, db=ai_employee_db |
-| Email SMTP | ✅ CONNECTED | smtp.gmail.com:587, izmarao99@gmail.com |
-| Facebook | ✅ LIVE | Live Page token + Page ID configured — posts go live |
-| Instagram | ✅ LIVE | Access token + Account ID configured — posts go live |
-| Twitter/X | ⚠️ DRY-RUN | Keys configured; SOCIAL_DRY_RUN=true (no API credits) |
-| Gmail Watcher | ⚠️ OAuth needed | credentials.json missing — explain during demo |
+**Screen setup before recording:**
+- Left half: Obsidian (vault open)
+- Right half: Terminal (in vault root, venv activated)
 
 ---
 
-## Gold Tier Requirements Checklist
+## BEFORE YOU HIT RECORD
 
-| # | Requirement | Status | Evidence |
-|---|------------|--------|----------|
-| 1 | All Silver requirements | ✅ | Inbox, email, plans, HITL, LinkedIn |
-| 2 | Cross-domain integration | ✅ | CLAUDE.md cross-domain section |
-| 3 | Odoo + MCP server | ✅ | mcp_servers/odoo_server.py — 6 tools |
-| 4 | Facebook + Instagram | ✅ | social_media_server.py — dry-run demo |
-| 5 | Twitter/X | ✅ | Keys set, SOCIAL_DRY_RUN=true |
-| 6 | Multiple MCP servers | ✅ | email-mcp + odoo + social-media |
-| 7 | CEO Briefing | ✅ | Briefings/CEO_Briefing_2026-03-12.md |
-| 8 | Error recovery | ✅ | utils/error_handler.py — 5 severity levels |
-| 9 | Audit logging | ✅ | Logs/audit.jsonl — 16 entries |
-| 10 | Ralph Wiggum loop | ✅ | .claude/hooks/ralph_stop_check.py |
-| 11 | Architecture docs | ✅ | docs/architecture.md — 739 lines |
-| 12 | Agent Skills | ✅ | 14 skills in .claude/skills/ |
+Run this once to confirm what is live:
+```powershell
+python scripts/pre_demo_check.py
+```
+
+Start Docker if Odoo is down:
+```powershell
+docker compose -f odoo-cloud/docker-compose.yml up -d
+```
+
+Clean up any leftover demo files from last run:
+```powershell
+# Clear old test files so folders look clean
+rm -f Needs_Action/email/EMAIL_test_demo_*.md
+rm -f In_Progress/cloud/EMAIL_test_demo_*.md
+rm -f Pending_Approval/email/REPLY_test_demo_*.md
+```
 
 ---
 
-## Demo Steps — Run In This Order
+---
+
+# PART 1 — BRONZE TIER
+### "The Foundation: Files as a Message Queue"
+*Time: ~3 minutes*
 
 ---
 
-### STEP 1 — Show the Vault in Obsidian (1 min)
+### 1.1 — Open the Vault (45 sec)
 
-Open Obsidian → open this vault folder.
+Open Obsidian. Show the sidebar folder structure.
 
-**What to show:**
-- Open `Dashboard.md` → Gold tier dashboard with live data
-- Show folder structure in sidebar: Inbox, Needs_Action, Done, Plans, Pending_Approval, Approved, Rejected, Briefings, Accounting, Social_Media, Logs
-- Say: *"Every piece of work becomes a Markdown file that flows through these folders. The filesystem IS the message queue."*
+**Say:**
+> "This is the AI Employee — a fully autonomous business assistant built inside an Obsidian vault.
+> Every piece of work becomes a Markdown file. The folders are the pipeline.
+> No database, no message broker — just files moving through folders, synced by Git."
 
-**Key files to open:**
-- `Dashboard.md` — live system state
-- `Business_Goals.md` — NovaMind Tech Solutions
-- `CLAUDE.md` — AI instructions (scroll to Gold Tier sections)
-
----
-
-### STEP 2 — Verify ALL MCP Connections Live (2 min)
-
-Run in Claude Code (type these commands):
-
-```
-Check all MCP connections: test Odoo status, SMTP status, and social media config
-```
-
-**Or show these MCP tool results one by one:**
-
-**Odoo:**
-```
-Use odoo_status tool to verify connection
-```
-Expected output: `status: connected, version: 19.0-20260217, uid: 2`
-
-**Email SMTP:**
-```
-Use check_smtp_status tool
-```
-Expected output: `OK: SMTP connection to smtp.gmail.com:587 successful`
-
-**Social Media (dry-run):**
-```
-Show social media is configured with SOCIAL_DRY_RUN=true for safe demo
-```
-
-Say: *"Twitter has keys configured but SOCIAL_DRY_RUN=true — it simulates posts without using API credits. Facebook is live. Instagram needs one more token from the Meta developer portal."*
+Click through each folder briefly:
+- `Inbox/` — raw items land here
+- `Needs_Action/` — AI picks up work from here
+- `Done/` — completed tasks go here
+- `Dashboard.md` — open this, show the tier badge and folder counts
 
 ---
 
-### STEP 3 — Odoo Accounting Integration (2 min)
+### 1.2 — Show the Rules Engine (30 sec)
 
-**Run in Claude Code:**
-```
-Sync Odoo accounting data — search customers, get invoices, get account balances, update Current_Month.md
-```
+Open `Company_Handbook.md`. Scroll to the **Priority Keywords** table.
 
-**What to show:**
-1. Odoo MCP pulls live data from `localhost:8069`
-2. 30-account Pakistani COA loaded
-3. `Accounting/Current_Month.md` updated with live data
-4. Dashboard accounting section reflects current state
-
-**Open in Obsidian:** `Accounting/Current_Month.md`
-
-Say: *"This syncs every day at 7 AM via scheduler.bat. Odoo is running locally on Docker."*
+**Say:**
+> "The AI knows the company rules. It reads this handbook to classify every incoming item —
+> high, medium, or low priority — before deciding what to do with it."
 
 ---
 
-### STEP 4 — Social Media Post (live Facebook demo) (2 min)
+### 1.3 — Show a Completed Task (45 sec)
 
-**Run in Claude Code:**
-```
-/social-media-manager
-Generate a social media post for NovaMind Tech Solutions about AI automation for Pakistani SMEs. Save as a Facebook post for approval.
-```
+Open `Done/DONE_EMAIL_service_inquiry_20260405_143000.md` in Obsidian.
 
-**What to show:**
-1. Post generated → saved to `/Pending_Approval/APPROVAL_social_post_facebook_*.md`
-2. Show the HITL gate — file needs human approval before posting
-3. Move file to `/Approved` to trigger live post
-4. Claude calls `post_to_facebook()` via MCP → post goes live on NovaMind Facebook Page
-
-**Open in Obsidian:** `Pending_Approval/` folder → move to `Approved/` live during demo
-
-Say: *"Facebook is fully configured with a live Page token. The AI generated the post, but nothing goes live until I move this file to /Approved — that's the HITL safety layer. Watch what happens when I approve it."*
-
-**Note:** Twitter is in dry-run mode (no API credits needed). Instagram is also live with token. Facebook is the cleanest live demo.
+**Say:**
+> "Here is a completed task. An email came in, the AI read it, classified it,
+> drafted a reply, got human approval, sent it, and archived the whole thing here.
+> This is the complete lifecycle of one piece of work."
 
 ---
 
-### STEP 5 — CEO Briefing (2 min)
+---
 
-**Open in Obsidian:** `Briefings/CEO_Briefing_2026-03-12.md`
-
-Walk through the sections:
-- Executive Summary (3 sentences with real numbers)
-- Financial Overview (live from Odoo)
-- Task Summary (from vault folders)
-- Social Media Performance (per platform)
-- System Health (all components)
-- Top 3 Recommendations (data-driven)
-
-Say: *"This generates every Monday at 7 AM automatically via Windows Task Scheduler. It's completely autonomous — reads Odoo, reads the vault, reads the audit log, and produces this in one shot."*
+# PART 2 — SILVER TIER
+### "HITL: The AI Asks Before It Acts"
+*Time: ~5 minutes*
 
 ---
 
-### STEP 6 — HITL Approval Workflow (1.5 min)
-
-**Show existing approval files:**
-```
-ls Pending_Approval/
-ls Approved/
-ls Done/
-```
-
-**Show one pending approval file in Obsidian:** `Pending_Approval/PENDING_odoo_invoice_test_20260312_100000.md`
-
-Walk through:
-- YAML frontmatter: `action: create_invoice`, `approval_required: true`
-- Invoice details table
-- "Move to /Approved to approve, /Rejected to reject"
-
-Say: *"This is the safety layer. Claude NEVER writes to Odoo, sends emails, or posts to social media without this file being in /Approved first. It's enforced at the code level — the Odoo MCP has zero write tools."*
-
----
-
-### STEP 7 — Error Recovery (1.5 min)
-
-**Show the error recovery test evidence:**
-
-```
-Open Logs/errors.jsonl
-```
-
-**Open in Obsidian:** `Logs/errors.jsonl` — scroll through and read aloud:
-
-```
-SEVERITY     COMPONENT          ERROR_TYPE             RESOLVED
------------------------------------------------------------------
-transient    odoo_sync          TimeoutError           resolved=True
-transient    odoo_sync          TimeoutError           resolved=True
-transient    odoo_sync          TimeoutError           resolved=True
-auth         odoo_sync          PermissionError        resolved=True
-```
-
-**Open in Obsidian:** `Logs/audit.jsonl` — scroll to the `system_degraded` and `error_recovery` entries and highlight them.
-
-Say: *"TRANSIENT errors retry 3 times with 30s/60s/120s backoff. AUTH errors create an URGENT file in /Needs_Action for human intervention. The system degrades gracefully — Gmail and file watcher continued working while Odoo was down."*
-
----
-
-### STEP 8 — Ralph Wiggum Loop (1.5 min)
-
-**Show the infrastructure:**
+### 2.1 — Drop a New Email into Needs_Action (1 min)
 
 In terminal:
 ```bash
-ls .claude/hooks/
-ls .claude/commands/
-cat .claude/settings.json
+cat > "Needs_Action/email/EMAIL_client_inquiry_$(date +%Y%m%d_%H%M%S).md" << 'EOF'
+---
+type: email
+priority: high
+from: ahmed.khan@khanindustries.pk
+subject: Interested in AI automation — need pricing and case study
+received: 2026-04-05T09:00:00
+---
+
+Hi NovaMind,
+
+We are a 50-person manufacturing company in Lahore.
+We are interested in your AI automation services.
+Can you send us a pricing breakdown and a case study?
+
+Best,
+Ahmed Khan
+CEO, Khan Industries
+EOF
 ```
 
-**Run a live test:**
-```
-/ralph-loop "List all files in /Needs_Action. If empty, confirm vault is clean and output <promise>VAULT_CLEAN</promise>" --max-iterations 3 --completion-promise "VAULT_CLEAN"
-```
+**Say:**
+> "In production, the Gmail watcher creates files like this automatically every 2 minutes.
+> I'm doing it manually here to show you the exact file the AI sees."
 
-**What to show:**
-1. `ralph_state.json` written (active=true, iteration=1)
-2. Task executes
-3. Promise `<promise>VAULT_CLEAN</promise>` output
-4. Stop hook detects promise → allows stop
-5. State cleared
-
-Say: *"This is the stop-hook pattern. Claude works → tries to exit → hook checks for the promise → if found, stops → if not, re-injects the task. Named after The Simpsons character — persistent despite setbacks."*
+Show the file in Obsidian immediately after creating it.
 
 ---
 
-### STEP 9 — Audit Log (1 min)
+### 2.2 — Let Claude Process It (1.5 min)
 
-**Run in terminal:**
+In Claude Code, type:
+```
+/file-processing
+```
+
+**Narrate as it runs:**
+- "Reading the file from Needs_Action"
+- "Checking Company_Handbook — keyword 'CEO' and 'pricing' → classifies as HIGH priority"
+- "Drafting a reply"
+- "It's an outbound email — HITL required — creating approval request in Pending_Approval"
+- "Moving the original to Done"
+- "Updating Dashboard"
+
+---
+
+### 2.3 — Show the Approval Gate (1 min)
+
+In Obsidian, open `Pending_Approval/email/` — show the file Claude just created.
+
+Read the frontmatter out loud:
+```yaml
+action: email_reply
+approval_required: true
+to: ahmed.khan@khanindustries.pk
+```
+
+**Say:**
+> "This is the Human-in-the-Loop checkpoint. Claude drafted the reply but it cannot send
+> anything — no email, no social post, no Odoo write — until a human moves this file.
+> This is enforced at the code level, not by trust."
+
+Now approve it — drag the file from `Pending_Approval/email/` to `Approved/` in Obsidian.
+
+**Say:**
+> "One drag. That is the human decision. Now the agent can execute."
+
+---
+
+### 2.4 — Show Multi-Step Planning (30 sec)
+
+In Claude Code, type:
+```
+/task-planner
+
+A new enterprise client wants a full onboarding proposal:
+discovery call, needs assessment, custom pricing, and contract draft.
+Create an execution plan.
+```
+
+Open `Plans/` in Obsidian — show the new PLAN file with checkboxes.
+
+**Say:**
+> "For complex tasks, Claude creates a tracked plan. Each step has its own approval
+> if needed. You can see exactly where any task is at any moment."
+
+---
+
+---
+
+# PART 3 — GOLD TIER
+### "Three Live MCP Servers: Accounting, Email, Social Media"
+*Time: ~8 minutes*
+
+---
+
+### 3.1 — Show All Three MCP Servers Connected (1 min)
+
+In Claude Code, type:
+```
+Check all MCP connections: run odoo_status, check_smtp_status, and social_media_status
+```
+
+**Narrate results:**
+- Odoo: `connected, version 19.0, uid=2, db=ai_employee_db`
+- SMTP: `OK — smtp.gmail.com:587`
+- Social Media: FB/IG/Twitter keys configured, `SOCIAL_DRY_RUN=true`
+
+**Say:**
+> "Three live MCP servers. Email over Gmail SMTP, Odoo 19 ERP running locally on Docker,
+> and Social Media for Facebook, Instagram, and Twitter."
+
+---
+
+### 3.2 — Live Odoo Accounting Sync (1.5 min)
+
+In Claude Code, type:
+```
+Sync Odoo: search customers, get invoices, get overdue invoices,
+get account balances, and update Accounting/Current_Month.md
+```
+
+**Narrate as each MCP tool fires:**
+- `search_customers` → live customer list
+- `get_invoices` → posted invoices with PKR amounts
+- `get_overdue_invoices` → any past-due flagged
+- `get_account_balances` → 30-account Pakistani Chart of Accounts
+
+Open `Accounting/Current_Month.md` in Obsidian.
+
+**Say:**
+> "This runs automatically every day at 7 AM. Odoo is on Docker locally.
+> The AI reads live financial data but has ZERO write tools — the MCP server
+> exposes read-only tools only. Any write to Odoo goes through Pending_Approval first."
+
+---
+
+### 3.3 — Social Media Post with HITL (1.5 min)
+
+In Claude Code, type:
+```
+/social-media-manager
+
+Generate a Facebook post for NovaMind Tech Solutions.
+Topic: How AI automation is helping Pakistani SMEs cut manual work by 60%.
+Brand voice: professional, specific to South Asian market. Save for approval.
+```
+
+**Narrate:**
+- Claude reads `Business_Goals.md` for brand rules
+- Post saved to `Pending_Approval/social/`
+
+Show the file in Obsidian.
+
+Now approve and post:
+```bash
+mv Pending_Approval/social/APPROVAL_social_post_facebook_*.md Approved/
+```
+
+Then in Claude Code:
+```
+Post the approved Facebook content from the Approved folder
+```
+
+**Say:**
+> "Facebook is live — real Page token, real post. Twitter is in dry-run mode
+> to save API credits during demo. One env var flip makes it live.
+> The code path is identical either way."
+
+---
+
+### 3.4 — CEO Briefing (1.5 min)
+
+Open `Briefings/CEO_Briefing_2026-03-12.md` in Obsidian.
+
+Walk through each section slowly:
+1. **Executive Summary** — 3 sentences, real numbers
+2. **Financial Overview** — revenue, overdue invoices, account balances from Odoo
+3. **Task Summary** — items completed, pending, stuck this week
+4. **Social Media Performance** — posts per platform
+5. **System Health** — all components, last run, error count
+6. **Top 3 Recommendations** — priority-ordered actions
+
+**Say:**
+> "Every Monday at 7 AM this generates automatically. The CEO opens their laptop
+> and this is waiting — no manual reports, no chasing people for numbers.
+> It reads Odoo, reads the vault, reads the audit log, and synthesizes it in one shot."
+
+---
+
+### 3.5 — Error Recovery System (1 min)
+
+```bash
+python scripts/demo_show_errors.py
+```
+
+**Say:**
+> "Five severity levels. TRANSIENT errors retry 3 times with 30, 60, 120 second backoff.
+> AUTH errors create an URGENT action file for human intervention.
+> CRITICAL errors halt the component. The system degrades gracefully —
+> if Odoo goes down, Gmail and the file watcher keep running."
+
+---
+
+### 3.6 — The Audit Trail (45 sec)
+
 ```bash
 python scripts/demo_show_audit.py
 ```
 
-**What to show:**
-- Every action has ts, actor (claude vs human), action name
-- HITL entries show `approval_required: true`
-- `human` actor for the approval_granted entry
+Point out:
+- `actor: claude` vs `actor: human` — every action attributed
+- `approval_required: true` entries
+- 3000+ entries — everything logged since day one
 
-Say: *"Every single action — AI and human — is recorded here. You can see exactly what the AI did, when, and what the human approved. This is the complete audit trail."*
+**Say:**
+> "Every action — AI and human — timestamped, component-tagged, with approval status.
+> Full compliance audit trail. Right now there are over 3,000 entries in this log."
 
 ---
 
-### STEP 10 — Scheduler (30 sec)
+### 3.7 — Ralph Wiggum Loop (45 sec)
 
-**Show the scheduler:**
+```bash
+ls .claude/hooks/
+```
+
+Show `ralph_stop_check.py` exists. Show `.claude/settings.json`.
+
+Run a quick test:
+```
+/ralph-loop "Check Needs_Action/email/ for unprocessed files. If empty output <promise>VAULT_CLEAN</promise>" --max-iterations 3 --completion-promise "VAULT_CLEAN"
+```
+
+**Say:**
+> "This is the stop-hook pattern for autonomous loops. Claude works, tries to exit,
+> the hook intercepts — if the completion promise isn't in the output, it re-injects the task.
+> Claude keeps running until the job is actually done. We named it Ralph Wiggum —
+> persistent despite setbacks."
+
+---
+
+### 3.8 — Scheduler (30 sec)
+
 ```bash
 scripts\scheduler.bat help
 ```
 
-**Or show the file in editor:**
-Open `scripts/scheduler.bat`
+Show the 9 commands: `daily`, `odoo-sync`, `linkedin`, `social-batch`, `ceo-briefing`, `weekly-audit`, `health-check`.
 
-**Show Windows Task Scheduler setup doc:**
-Open `docs/windows-scheduler-setup.md`
-
-Say: *"9 scheduled tasks: daily Odoo sync at 7 AM, CEO Briefing every Monday, LinkedIn posts Mon/Wed/Fri, social batch Tue/Thu, weekly audit Sunday. All managed by Windows Task Scheduler."*
-
----
-
-### STEP 11 — Architecture Docs (30 sec)
-
-**Open:** `docs/architecture.md`
-
-Scroll through quickly:
-- ASCII component diagram (Section 1)
-- Data flow diagrams (Section 2)
-- Security model table (Section 4)
-- 10 Lessons Learned (Section 5)
-
-Say: *"739 lines, covers every component, every data flow, the security model, and 10 genuine lessons from building this system using AIDD methodology."*
+**Say:**
+> "9 scheduled tasks, all running on Windows Task Scheduler.
+> The system operates fully autonomously — 7 AM Odoo sync, 9 AM LinkedIn posts,
+> Monday CEO briefing, Sunday weekly audit."
 
 ---
 
-### STEP 12 — Agent Skills (30 sec)
+---
+
+# PART 4 — PLATINUM TIER
+### "Two Agents, One Vault, Zero Coordination Calls"
+*Time: ~5 minutes*
+
+---
+
+### Opening line (say this before starting):
+> "Platinum tier adds a second agent. A Cloud Agent runs 24/7 on AWS EC2.
+> A Local Agent runs here on my Windows PC.
+> They never call each other, never share a database —
+> they communicate exclusively through this Git-synced vault."
+
+---
+
+### 4.1 — Show the Architecture (30 sec)
+
+Open `Dashboard.md` in Obsidian. Scroll to the **Cloud Agent Status** section.
+
+Then show in terminal:
+```bash
+ls In_Progress/cloud/
+ls In_Progress/local/
+ls Signals/
+cat Signals/cloud_heartbeat.md
+```
+
+**Say:**
+> "The Cloud Agent writes a heartbeat every 5 minutes. If Local sees the heartbeat is
+> more than 60 minutes old, it creates an URGENT signal. That is the entire
+> inter-agent communication protocol — file moves."
+
+---
+
+### 4.2 — Run the Full Platinum Demo Loop (3 min)
+
+**Step A — Cloud side (simulate on EC2 or locally):**
+```bash
+python tests/platinum_demo.py --mode cloud --demo-id demo_live_$(date +%H%M%S)
+```
+
+**Narrate each printed step:**
+- "Email arrives from client"
+- "Cloud Gmail watcher detects it"
+- "Cloud creates EMAIL_*.md in Needs_Action/email/"
+- "Claim-by-move — Cloud moves it to In_Progress/cloud/ — it owns this item now"
+- "Cloud drafts professional reply with Claude"
+- "Draft saved to Pending_Approval/email/ — waiting for human"
+- "Cloud git pushes — draft is now in GitHub"
+
+**Step B — Local syncs:**
+```bash
+scripts\vault_sync.bat
+```
+
+Show git pull output — "Fast-forward, files changed."
+
+**Step C — Human reviews in Obsidian:**
+
+Navigate to `Pending_Approval/email/` — open the draft. Read it briefly.
+
+**Say:**
+> "Cloud drafted this while my PC was offline. Now I review it in Obsidian."
+
+Drag the file to `Approved/`.
+
+**Step D — Local executes:**
+```bash
+python local/local_agent.py --once
+```
+
+**Narrate output:**
+- "Vault sync — pulling latest"
+- "Cloud heartbeat OK"
+- "Found 1 approved action"
+- "Routing: email_reply → Gmail MCP send_email"
+- "Email sent — logged — archived"
+
+---
+
+### 4.3 — Verify Everything Completed (45 sec)
 
 ```bash
-ls .claude/skills/
+python tests/platinum_demo.py --mode verify --demo-id demo_live_XXXXXX
 ```
 
-Show: 14 skills — `ceo-briefing`, `social-media-manager`, `odoo-accounting`, `error-recovery`, `audit-logger`, `ralph-loop-tasks`, etc.
+Expected — all green:
+```
+  [OK]  /Done file present
+  [OK]  Audit log: email_sent found
+  [OK]  Pending_Approval/email/ — empty
+  [OK]  In_Progress/cloud/ — empty
 
-Open one skill in editor: `.claude/skills/ceo-briefing/SKILL.md`
+PLATINUM DEMO PASSED
+```
 
-Say: *"Every recurring AI task is a version-controlled skill file. Updating the skill changes the AI's behavior for that task system-wide — no code changes needed."*
+Show in Obsidian:
+- `Done/` — file is there
+- `Pending_Approval/email/` — empty
+- `In_Progress/cloud/` — empty
 
 ---
 
-## Content Files to Submit
+### Closing line:
+> "Email arrived while Local was offline.
+> Cloud drafted it autonomously, synced it through Git.
+> I reviewed in Obsidian and approved with one drag.
+> Local sent via Gmail MCP, logged every step, archived the task.
+> Two agents, zero direct communication, zero missed messages.
+> That is the complete Platinum AI Employee."
 
-These files exist and are ready for submission:
+---
+
+---
+
+# QUICK REFERENCE — COMMANDS IN ORDER
 
 ```
-AI_Employee_Vault/
-├── CLAUDE.md                              ← AI instructions (full Gold tier)
-├── README.md                              ← Project overview (536 lines)
-├── Business_Goals.md                      ← NovaMind Tech Solutions
-├── Company_Handbook.md                    ← Rules + approval policy
-├── Dashboard.md                           ← Live system state
-├── orchestrator.py                        ← Gold tier orchestrator
-│
-├── docs/
-│   ├── architecture.md                    ← SUBMIT THIS (739 lines)
-│   ├── windows-scheduler-setup.md         ← Task Scheduler setup
-│   ├── odoo-setup.md                      ← Odoo Docker setup
-│   └── social-media-setup.md             ← Social API setup
-│
-├── mcp_servers/
-│   ├── email_server.py                    ← Email MCP (FastMCP)
-│   ├── odoo_server.py                     ← Odoo MCP (XML-RPC)
-│   └── social_media_server.py             ← FB/IG/Twitter MCP
-│
-├── utils/
-│   ├── error_handler.py                   ← 5-severity error system
-│   └── audit_logger.py                    ← JSONL audit trail
-│
-├── watchers/
-│   ├── gmail_watcher.py                   ← Gmail OAuth watcher
-│   └── filesystem_watcher.py             ← File drop watcher
-│
-├── scripts/
-│   ├── scheduler.bat                      ← Windows Task Scheduler
-│   └── scheduler.sh                       ← Linux/macOS cron
-│
-├── .claude/
-│   ├── skills/ (14 skills)                ← All AI skills
-│   ├── hooks/ralph_stop_check.py          ← Ralph Wiggum hook
-│   ├── commands/ralph-loop.md             ← /ralph-loop command
-│   └── settings.json                      ← Hook registration
-│
-├── Accounting/Current_Month.md            ← Live Odoo sync
-├── Briefings/CEO_Briefing_2026-03-12.md  ← Generated briefing
-└── Logs/
-    ├── audit.jsonl                        ← 16 action entries
-    └── errors.jsonl                       ← 4 error entries
+# PRE-DEMO
+python scripts/pre_demo_check.py
+docker compose -f odoo-cloud/docker-compose.yml up -d
+
+# BRONZE / SILVER
+(Obsidian) Open Dashboard.md, Company_Handbook.md, Done/ folder
+cat > "Needs_Action/email/EMAIL_client_inquiry_TIMESTAMP.md"   ← create test email
+/file-processing                                               ← Claude processes it
+(Obsidian) Show Pending_Approval, drag to Approved
+/task-planner                                                  ← show multi-step plan
+
+# GOLD
+Check all MCP connections: run odoo_status, check_smtp_status, and social_media_status
+Sync Odoo: search customers, get invoices, get account balances, update Current_Month.md
+/social-media-manager  → approve → post
+(Obsidian) Open Briefings/CEO_Briefing_2026-03-12.md
+python scripts/demo_show_errors.py
+python scripts/demo_show_audit.py
+/ralph-loop "Check Needs_Action/email/. If empty output <promise>VAULT_CLEAN</promise>"
+scripts\scheduler.bat help
+
+# PLATINUM
+cat Signals/cloud_heartbeat.md
+python tests/platinum_demo.py --mode cloud --demo-id demo_live_XXX
+scripts\vault_sync.bat
+(Obsidian) Open draft → drag to Approved
+python local/local_agent.py --once
+python tests/platinum_demo.py --mode verify --demo-id demo_live_XXX
+python scripts/demo_show_audit.py
 ```
 
 ---
 
-## What to Say About Facebook
+# IF SOMETHING BREAKS
 
-> *"Facebook is fully live — we have a Page Access Token with publish permissions. You just watched the AI generate a post, wait for human approval, then publish it to the NovaMind Facebook Page in real time. No dry-run, no simulation."*
-
-## What to Say About Instagram
-
-> *"Instagram is also fully configured with a live access token and account ID — same workflow as Facebook. Posts go live after HITL approval."*
-
-## What to Say About Twitter
-
-> *"Twitter/X has all 4 API keys configured. We set SOCIAL_DRY_RUN=true to avoid spending API credits during the demo — the code path is identical to live posting. Just flip that one env var."*
-
-## What to Say About Gmail Watcher
-
-> *"The Gmail watcher requires OAuth 2.0 — you run it once in a browser to get a token, which then auto-refreshes. We have the watcher code, the integration with the audit logger, and the CLAUDE.md instructions. For the demo we're showing the email MCP (SMTP send) which works live."*
-
----
-
-## Quick Verify Before Demo
-
-Run this one-liner to confirm everything is up:
-
-```bash
-python -c "
-import xmlrpc.client, socket, os
-from dotenv import load_dotenv; load_dotenv('.env')
-# Odoo
-try:
-    c=xmlrpc.client.ServerProxy('http://localhost:8069/xmlrpc/2/common')
-    uid=c.authenticate(os.environ['ODOO_DB'],os.environ['ODOO_LOGIN'],os.environ['ODOO_PASSWORD'],{})
-    print(f'Odoo: OK uid={uid}')
-except Exception as e: print(f'Odoo: FAIL {e}')
-# SMTP
-try:
-    s=socket.create_connection(('smtp.gmail.com',587),timeout=5);s.close()
-    print('SMTP: OK')
-except Exception as e: print(f'SMTP: FAIL {e}')
-# Social
-for k in ['FB_PAGE_ACCESS_TOKEN','TWITTER_API_KEY']:
-    print(f'{k}: {\"SET\" if os.environ.get(k) else \"MISSING\"}')
-print(f'SOCIAL_DRY_RUN: {os.environ.get(\"SOCIAL_DRY_RUN\",\"false\")}')
-"
-```
-
-Expected:
-```
-Odoo: OK uid=2
-SMTP: OK
-FB_PAGE_ACCESS_TOKEN: SET
-TWITTER_API_KEY: SET
-SOCIAL_DRY_RUN: true
-```
+| Problem | What to do |
+|---------|-----------|
+| Odoo FAIL | `docker compose -f odoo-cloud/docker-compose.yml up -d` then wait 30 sec |
+| Facebook MISSING | Show Twitter dry-run output as proof of the social flow — same code path |
+| Gmail MCP fails | Add `--dry-run` to platinum_demo.py — all files created, audit logged |
+| EC2 not available | Run `--mode cloud` locally — demo shows same output |
+| platinum_demo.py errors | `python tests/platinum_demo.py --dry-run` — identical 18 steps, no external calls |

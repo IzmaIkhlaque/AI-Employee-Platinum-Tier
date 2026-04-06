@@ -16,12 +16,12 @@ This file defines how the AI Employee behaves when processing files and tasks. I
 
 ## Priority Keywords
 
-| Priority | Keywords |
-|----------|----------|
-| 🔴 Critical | urgent, emergency, asap |
-| 🟠 High | important, deadline, invoice |
-| 🟡 Medium | question, update, follow-up |
-| 🟢 Low | fyi, no rush |
+| Priority    | Keywords                     |
+| ----------- | ---------------------------- |
+| 🔴 Critical | urgent, emergency, asap      |
+| 🟠 High     | important, deadline, invoice |
+| 🟡 Medium   | question, update, follow-up  |
+| 🟢 Low      | fyi, no rush                 |
 
 ---
 
