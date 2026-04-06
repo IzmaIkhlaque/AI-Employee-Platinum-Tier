@@ -1,13 +1,13 @@
 ---
 month: April 2026
-last_synced: 2026-04-06T10:00:00
+last_synced: 2026-04-06T15:35:00
 source: odoo
 odoo_version: 19.0-20260217
 database: ai_employee_db
 ---
 # Accounting — April 2026
 
-> **Last synced:** 2026-04-06 10:00 PKT via Odoo MCP (live sync)
+> **Last synced:** 2026-04-06 15:35 PKT via Odoo MCP (live sync)
 > **Source:** Odoo 19 — `ai_employee_db` — `http://localhost:8069`
 
 ---
@@ -16,8 +16,8 @@ database: ai_employee_db
 
 | Metric | Amount (PKR) |
 |--------|-------------|
-| Total Revenue (invoiced, March) | 0.00 |
-| Total Payments Received (March) | 0.00 |
+| Total Revenue (invoiced, April) | 0.00 |
+| Total Payments Received (April) | 0.00 |
 | Outstanding Receivables | 0.00 |
 | Overdue Receivables | 0.00 |
 | Open Invoices (count) | 0 |
@@ -59,22 +59,44 @@ No overdue invoices.
 
 ---
 
-## Chart of Accounts (Snapshot — accounts with non-zero balance)
+## Chart of Accounts (Snapshot — first 30 accounts returned)
 
-All 30 accounts returned a balance of **0.00 PKR**. Sample accounts:
+All accounts returned a balance of **0.00 PKR**. Key accounts:
 
 | Code | Account Name | Type | Balance (PKR) |
 |------|-------------|------|--------------|
 | 1111001 | Building | asset_fixed | 0.00 |
 | 1111002 | Furniture and Fixture | asset_fixed | 0.00 |
+| 1111003 | Tools and Equipment | asset_fixed | 0.00 |
+| 1111004 | Plant and Machinery | asset_fixed | 0.00 |
 | 1111005 | Technology | asset_fixed | 0.00 |
+| 1111006 | Land | asset_fixed | 0.00 |
+| 1111007 | Construction | asset_fixed | 0.00 |
+| 1111008 | Installations | asset_fixed | 0.00 |
+| 1111009 | Vehicle | asset_fixed | 0.00 |
+| 1111010 | Vehicle Accessories | asset_fixed | 0.00 |
 | 1112001 | ERP System | asset_non_current | 0.00 |
+| 1113000 | Investment Property | asset_non_current | 0.00 |
+| 1114000 | Long Term Investments | asset_non_current | 0.00 |
+| 1115000 | Long Term Deposits | asset_non_current | 0.00 |
+| 1116000 | Biological Assets | asset_non_current | 0.00 |
+| 1117000 | Investments in Associates | asset_non_current | 0.00 |
+| 1118000 | Investments in Jointly Controlled Entities | asset_non_current | 0.00 |
+| 1119000 | Other Financial Assets | asset_non_current | 0.00 |
 | 1121001 | Receivable from Customers | asset_receivable | 0.00 |
+| 1122001 | Advances to Suppliers | asset_current | 0.00 |
+| 1122002 | Withholding Tax- Advance | asset_current | 0.00 |
+| 1122003 | Loan to Employees | asset_current | 0.00 |
+| 1123001 | Security Deposits | asset_current | 0.00 |
 | 1123002 | Prepaid Rent | asset_current | 0.00 |
+| 1123003 | Income Tax Refundable | asset_current | 0.00 |
+| 1123004 | Sales Tax Refundable | asset_receivable | 0.00 |
+| 1123005 | Sales Tax Paid | asset_current | 0.00 |
+| 1124000 | Other Current Assets | asset_current | 0.00 |
 | 1125001 | Stock in Hand | asset_current | 0.00 |
 | 1125002 | Work in Process | asset_current | 0.00 |
 
-> Full chart contains 30 accounts — all at zero. Record transactions in Odoo to populate balances.
+> Full chart returned 30 accounts — all at zero. Record transactions in Odoo to populate balances.
 
 ---
 

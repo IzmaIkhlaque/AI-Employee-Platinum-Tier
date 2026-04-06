@@ -36,9 +36,9 @@ except ImportError:
 _vault_root = Path(__file__).parent.parent
 load_dotenv(_vault_root / ".env")
 
-FB_PAGE_ACCESS_TOKEN  = os.environ.get("FB_PAGE_ACCESS_TOKEN", "")
-FB_PAGE_ID            = os.environ.get("FB_PAGE_ID", "")
-IG_USER_ID            = os.environ.get("IG_USER_ID", "")
+FB_PAGE_ACCESS_TOKEN  = os.environ.get("FB_PAGE_ACCESS_TOKEN") or os.environ.get("FACEBOOK_ACCESS_TOKEN", "")
+FB_PAGE_ID            = os.environ.get("FB_PAGE_ID") or os.environ.get("FACEBOOK_PAGE_ID", "")
+IG_USER_ID            = os.environ.get("IG_USER_ID") or os.environ.get("INSTAGRAM_ACCOUNT_ID", "")
 
 TWITTER_API_KEY       = os.environ.get("TWITTER_API_KEY", "")
 TWITTER_API_SECRET    = os.environ.get("TWITTER_API_SECRET", "")

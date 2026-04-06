@@ -89,15 +89,15 @@ Open `Done/DONE_EMAIL_service_inquiry_20260405_143000.md` in Obsidian.
 
 ### 2.1 — Drop a New Email into Needs_Action (1 min)
 
-In terminal:
-```bash
-cat > "Needs_Action/email/EMAIL_client_inquiry_$(date +%Y%m%d_%H%M%S).md" << 'EOF'
+In PowerShell terminal:
+```powershell
+@"
 ---
 type: email
 priority: high
 from: ahmed.khan@khanindustries.pk
 subject: Interested in AI automation — need pricing and case study
-received: 2026-04-05T09:00:00
+received: 2026-04-06T09:00:00
 ---
 
 Hi NovaMind,
@@ -109,14 +109,14 @@ Can you send us a pricing breakdown and a case study?
 Best,
 Ahmed Khan
 CEO, Khan Industries
-EOF
+"@ | Set-Content "Needs_Action/email/EMAIL_client_inquiry_live.md"
 ```
 
 **Say:**
 > "In production, the Gmail watcher creates files like this automatically every 2 minutes.
-> I'm doing it manually here to show you the exact file the AI sees."
+> I'm simulating that here to show you the exact file the AI sees."
 
-Show the file in Obsidian immediately after creating it.
+Switch to Obsidian — the file appears in the sidebar instantly.
 
 ---
 
