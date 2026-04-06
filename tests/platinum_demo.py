@@ -330,6 +330,9 @@ class PlatinumDemo:
         if not self.dry_run:
             if self.approved_file.exists():
                 shutil.move(str(self.approved_file), str(self.done_file))
+            # Also clean up the original claimed file in In_Progress/cloud
+            if self.claimed_file.exists():
+                self.claimed_file.unlink()
         self.audit.log("item_done", "local_agent",
                        target=str(self.done_file.relative_to(VAULT_ROOT)),
                        details={"demo_id": self.demo_id})
