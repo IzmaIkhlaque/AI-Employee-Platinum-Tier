@@ -327,12 +327,14 @@ class PlatinumDemo:
 
         # Step 16
         step(16, f"Local moves task to /Done/DONE_REPLY_test_{self.demo_id}.md")
-        if not self.dry_run:
-            if self.approved_file.exists():
-                shutil.move(str(self.approved_file), str(self.done_file))
-            # Also clean up the original claimed file in In_Progress/cloud
-            if self.claimed_file.exists():
-                self.claimed_file.unlink()
+        if self.approved_file.exists():
+            shutil.move(str(self.approved_file), str(self.done_file))
+        elif self.dry_run:
+            # In dry-run, approved file may not exist — create the done file directly
+            self.done_file.write_text(f"DONE (dry-run) — demo_id: {self.demo_id}\n")
+        # Always clean up the original claimed file in In_Progress/cloud
+        if self.claimed_file.exists():
+            self.claimed_file.unlink()
         self.audit.log("item_done", "local_agent",
                        target=str(self.done_file.relative_to(VAULT_ROOT)),
                        details={"demo_id": self.demo_id})
