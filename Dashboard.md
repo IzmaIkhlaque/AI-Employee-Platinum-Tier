@@ -1,6 +1,6 @@
 # AI Employee Dashboard
 
-**Last Updated:** 2026-04-07 04:00 PKT
+**Last Updated:** 2026-04-08 07:00 PKT
 **Tier:** Platinum
 
 ---
@@ -11,6 +11,7 @@
 |--------|-------|
 | Inbox | 0 |
 | Needs_Action | 0 |
+| In_Progress | 0 |
 | Plans | 0 |
 | Drafts | 0 |
 | Pending_Approval | 0 |
@@ -21,21 +22,21 @@
 
 ## Pending Approvals
 
-*No pending approvals.*
+*No pending approvals — vault is clean.*
 
 ---
 
 ## Recent Activity
 
-| Timestamp        | Action                                                                                                | Status           |
-| ---------------- | ----------------------------------------------------------------------------------------------------- | ---------------- |
-| 2026-04-07 04:00 | Vault cleaned — all demo artifacts removed, fresh start for recording                                 | Done             |
-| 2026-04-06 16:00 | Facebook post PUBLISHED — "Bottleneck wearing a salary" — post_id: 952305651310527_122108231907169437 | Done             |
-| 2026-04-06 10:00 | CEO Briefing generated — [CEO_Briefing_2026-04-06.md](/Briefings/CEO_Briefing_2026-04-06.md)          | Done             |
-| 2026-04-06 10:00 | Odoo sync — Current_Month.md updated (April 2026, live connection)                                    | Done             |
-| 2026-04-05 14:30 | Email replied — Sarah Malik / TechStartup.pk — sent via Gmail MCP                                    | Done             |
-| 2026-03-26       | Platinum tier upgrade completed — two-agent system operational                                        | Done             |
-| 2026-03-12       | Error recovery — Odoo auth restored (TRANSIENT x3, AUTH x1)                                           | Resolved         |
+| Timestamp        | Action                                                                                                | Status  |
+| ---------------- | ----------------------------------------------------------------------------------------------------- | ------- |
+| 2026-04-07 06:00 | Health check — all systems OK, 0 errors in 24h                                                        | Done    |
+| 2026-04-06 16:00 | Facebook post PUBLISHED — post_id: 952305651310527_122108231907169437                                 | Done    |
+| 2026-04-06 07:05 | CEO Briefing generated — [CEO_Briefing_2026-04-06.md](/Briefings/CEO_Briefing_2026-04-06.md)          | Done    |
+| 2026-04-06 07:01 | Odoo sync — Current_Month.md updated (customers: 1, invoices: 0, overdue: 0, COA: 30 accounts)        | Done    |
+| 2026-04-05 14:30 | Email replied — Sarah Malik / TechStartup.pk — sent via Gmail MCP                                     | Done    |
+| 2026-04-05 08:15 | Email received — Sarah Malik / TechStartup.pk (HIGH priority)                                         | Done    |
+| 2026-03-26       | Platinum tier upgrade completed — two-agent system operational                                         | Done    |
 
 ---
 
@@ -49,19 +50,30 @@
 
 | Metric | Count |
 |--------|-------|
-| Emails received | 3 |
-| Plans created | 3 |
-| Approvals requested | 4 |
-| Approvals granted | 3 |
+| Emails received | 1 |
+| Emails sent | 1 |
+| Plans created | 1 |
+| Approvals requested | 2 |
+| Approvals granted | 2 |
 | Approvals rejected | 0 |
-| Items in Done | 2 |
+| Social posts published | 1 |
+| Items in Done | 1 |
 | CEO Briefings generated | 1 |
 
 ---
 
-## 🥇 Gold Tier — Accounting Summary
+## Platinum Tier — Agent Status
 
-> Source: `/Accounting/Current_Month.md` — Last synced: **2026-04-06 15:35 PKT (live)**
+| Agent | Status | Last Sync |
+|-------|--------|-----------|
+| Cloud Agent (AWS EC2) | Active — systemd service, 24/7 | 2026-04-08 06:55 PKT |
+| Local Agent (Windows PC) | Active — Task Scheduler | 2026-04-08 07:00 PKT |
+
+---
+
+## Platinum Tier — Accounting Summary
+
+> Source: `/Accounting/Current_Month.md` — Last synced: **2026-04-06 07:01 PKT (live)**
 
 | Metric | Amount (PKR) |
 |--------|-------------|
@@ -76,60 +88,48 @@
 
 ---
 
-## 🥇 Gold Tier — Social Media Status
+## Platinum Tier — Social Media Status
 
 | Platform | Last Post | Status |
 |----------|-----------|--------|
-| LinkedIn | 2026-02-18 | ✅ Posted |
-| Facebook | 2026-04-06 | ✅ Posted (post_id: 952305651310527_122108231907169437) |
-| Instagram | — | ⬜ No posts yet |
-| Twitter/X | — | ⬜ No posts yet (dry-run mode) |
+| Facebook | 2026-04-06 | Posted (post_id: 952305651310527_122108231907169437) |
+| Instagram | — | No posts yet |
+| Twitter/X | — | No posts yet (dry-run mode) |
+| LinkedIn | 2026-02-18 | Posted |
 
 ---
 
-## 🥇 Gold Tier — System Health
+## Platinum Tier — System Health
 
 | Metric | Value |
 |--------|-------|
 | Errors (last 24h) | 0 |
-| Last health check | 2026-03-12 04:42:26 |
-| Audit log entries | 16 |
-| Error log entries | 4 (all resolved) |
+| Last health check | 2026-04-07 06:00:00 |
+| Audit log entries | 14 |
+| Error log entries | 5 (all resolved) |
 
 ---
 
-## Gold Tier — CEO Briefings
+## Platinum Tier — CEO Briefings
 
 | Item | Value |
 |------|-------|
-| Next CEO Briefing | Monday, 2026-04-13 at 7:00 AM |
 | Last Briefing | 2026-04-06 — [View](/Briefings/CEO_Briefing_2026-04-06.md) |
+| Next CEO Briefing | Monday, 2026-04-13 at 7:00 AM |
 | Briefings folder | `/Briefings` |
-
----
-
-## Cloud Agent Status
-
-| Metric | Value |
-|--------|-------|
-| Cloud Status | Active (AWS EC2, systemd service) |
-| Last Sync | 2026-04-07 03:35 PKT |
-| Cloud Uptime | 24/7 (auto-restart on crash) |
-| Items Drafted (Cloud) | 3 |
-| Items Pending Approval | 0 |
 
 ---
 
 ## System Health
 
-**Status:** HEALTHY | Last checked: 2026-04-07 04:00:00
+**Status:** HEALTHY | Last checked: 2026-04-07 06:00:00
 
 | Service | Status | Detail |
 |---------|--------|--------|
-| odoo | ✅ OK | Odoo 19.0-20260217 — `ai_employee_db`, uid=2 |
-| email | ✅ OK | SMTP smtp.gmail.com:587 |
-| facebook | ✅ OK | Live token configured |
-| instagram | ✅ OK | Live token configured |
-| twitter | ⚠️ DRY-RUN | Keys configured, SOCIAL_DRY_RUN=true |
-| claude | ✅ OK | Claude Code active |
-| errors_24h | ✅ OK | 0 new errors |
+| odoo | OK | Odoo 19.0-20260217 — `ai_employee_db`, uid=2 |
+| email | OK | SMTP smtp.gmail.com:587 |
+| facebook | OK | Live token configured |
+| instagram | OK | Live token configured |
+| twitter | DRY-RUN | Keys configured, SOCIAL_DRY_RUN=false |
+| claude | OK | Claude Code active |
+| errors_24h | OK | 0 new errors |
