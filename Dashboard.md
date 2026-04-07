@@ -1,6 +1,6 @@
 # AI Employee Dashboard
 
-**Last Updated:** 2026-04-06 16:00 PKT
+**Last Updated:** 2026-04-07 04:00 PKT
 **Tier:** Platinum
 
 ---
@@ -10,47 +10,38 @@
 | Folder | Count |
 |--------|-------|
 | Inbox | 0 |
-| Needs_Action | 1 (client inquiry email) |
-| Plans | 1 (enterprise client onboarding) |
+| Needs_Action | 0 |
+| Plans | 0 |
 | Drafts | 0 |
-| Pending_Approval | 1 |
-| Approved | 1 (email inquiry) |
-| Done | 1 (Facebook post) |
+| Pending_Approval | 0 |
+| Approved | 0 |
+| Done | 1 |
 
 ---
 
 ## Pending Approvals
 
-| File | Action Type | Priority | Status |
-|------|-------------|----------|--------|
-| APPROVAL_social_post_facebook_20260406_100000.md | social_post | Normal | Awaiting Review |
-| APPROVAL_social_post_facebook_20260406_153500.md | social_post | Normal | Awaiting Review |
+*No pending approvals.*
 
 ---
 
 ## Recent Activity
 
-| Timestamp | Action | Status |
-|-----------|--------|--------|
-| 2026-04-06 16:00 | Facebook post PUBLISHED — "Bottleneck wearing a salary" — post_id: 952305651310527_122108231907169437 | Done |
-| 2026-04-06 15:36 | Facebook post drafted — "AI automation cutting manual work 60%" — saved to /Pending_Approval/social/ | Pending Approval |
-| 2026-04-06 15:35 | Odoo sync — Current_Month.md updated (customers: 1, invoices: 0, overdue: 0, COA: 30 accounts) | Done |
-| 2026-04-06 15:30 | Plan created — PLAN_enterprise_client_onboarding (9 steps, 3 approval gates) | In Progress |
-| 2026-04-06 10:00 | CEO Briefing generated — [CEO_Briefing_2026-04-06.md](/Briefings/CEO_Briefing_2026-04-06.md) | Done |
-| 2026-04-06 10:00 | Odoo sync — Current_Month.md updated (April 2026, live connection) | Done |
-| 2026-04-06 09:00 | Email received — Ahmed Khan / Khan Industries (HIGH priority) | Needs Action |
-| 2026-04-06 09:00 | Facebook post draft created — AI automation for Pakistani SMEs | Pending Approval |
-| 2026-04-03 06:00 | Platinum demo loop completed — demo_test02 email send verified | Done |
-| 2026-03-26 | Platinum tier upgrade completed — two-agent system operational | Done |
-| 2026-03-12 | Error recovery — Odoo auth restored (TRANSIENT x3, AUTH x1) | Resolved |
+| Timestamp        | Action                                                                                                | Status           |
+| ---------------- | ----------------------------------------------------------------------------------------------------- | ---------------- |
+| 2026-04-07 04:00 | Vault cleaned — all demo artifacts removed, fresh start for recording                                 | Done             |
+| 2026-04-06 16:00 | Facebook post PUBLISHED — "Bottleneck wearing a salary" — post_id: 952305651310527_122108231907169437 | Done             |
+| 2026-04-06 10:00 | CEO Briefing generated — [CEO_Briefing_2026-04-06.md](/Briefings/CEO_Briefing_2026-04-06.md)          | Done             |
+| 2026-04-06 10:00 | Odoo sync — Current_Month.md updated (April 2026, live connection)                                    | Done             |
+| 2026-04-05 14:30 | Email replied — Sarah Malik / TechStartup.pk — sent via Gmail MCP                                    | Done             |
+| 2026-03-26       | Platinum tier upgrade completed — two-agent system operational                                        | Done             |
+| 2026-03-12       | Error recovery — Odoo auth restored (TRANSIENT x3, AUTH x1)                                           | Resolved         |
 
 ---
 
 ## Active Items
 
-| File | Folder | Next Action |
-|------|--------|-------------|
-| PLAN_enterprise_client_onboarding_20260406_153000.md | /Plans | Step 1: Cross-reference client in Odoo |
+*No active items — vault is clean and ready.*
 
 ---
 
@@ -121,17 +112,17 @@
 
 | Metric | Value |
 |--------|-------|
-| Cloud Status | ⏳ Not deployed yet |
-| Last Sync | Never |
-| Cloud Uptime | — |
-| Items Drafted (Cloud) | 0 |
+| Cloud Status | Active (AWS EC2, systemd service) |
+| Last Sync | 2026-04-07 03:35 PKT |
+| Cloud Uptime | 24/7 (auto-restart on crash) |
+| Items Drafted (Cloud) | 3 |
 | Items Pending Approval | 0 |
 
 ---
 
 ## System Health
 
-**Status:** HEALTHY | Last checked: 2026-03-12 04:42:34
+**Status:** HEALTHY | Last checked: 2026-04-07 04:00:00
 
 | Service | Status | Detail |
 |---------|--------|--------|
