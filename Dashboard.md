@@ -1,6 +1,6 @@
 # AI Employee Dashboard
 
-**Last Updated:** 2026-04-08 07:00 PKT
+**Last Updated:** 2026-04-08 12:00 PKT
 **Tier:** Platinum
 
 ---
@@ -12,17 +12,19 @@
 | Inbox | 0 |
 | Needs_Action | 0 |
 | In_Progress | 0 |
-| Plans | 0 |
+| Plans | 1 |
 | Drafts | 0 |
-| Pending_Approval | 0 |
+| Pending_Approval | 1 |
 | Approved | 0 |
-| Done | 1 |
+| Done | 3 |
 
 ---
 
 ## Pending Approvals
 
-*No pending approvals — vault is clean.*
+| File | Action | Due |
+|------|--------|-----|
+| PENDING_email_reply_ahmed_khan_20260408_120000.md | Send email reply to Ahmed Khan / Khan Industries | ASAP |
 
 ---
 
@@ -30,9 +32,14 @@
 
 | Timestamp        | Action                                                                                                | Status  |
 | ---------------- | ----------------------------------------------------------------------------------------------------- | ------- |
+| 2026-04-08 12:05 | Plan created — PLAN_enterprise_client_onboarding (9 steps) — Khan Industries proposal                 | Active  |
+| 2026-04-08 12:00 | Email received — Ahmed Khan / Khan Industries (HIGH priority) — reply draft pending approval           | Pending |
 | 2026-04-07 06:00 | Health check — all systems OK, 0 errors in 24h                                                        | Done    |
 | 2026-04-06 16:00 | Facebook post PUBLISHED — post_id: 952305651310527_122108231907169437                                 | Done    |
 | 2026-04-06 07:05 | CEO Briefing generated — [CEO_Briefing_2026-04-06.md](/Briefings/CEO_Briefing_2026-04-06.md)          | Done    |
+| 2026-04-08 12:00 | Facebook post executed (dry-run) — "Pakistani SMEs losing 3-4hrs/day to manual tasks" — awaiting live creds | Dry-run |
+| 2026-04-08 12:00 | Facebook post drafted — "AI automation helping Pakistani SMEs cut manual work 60%" — pending approval   | Done    |
+| 2026-04-08 12:00 | Odoo sync — Current_Month.md updated (customers: 1, invoices: 0, overdue: 0, COA: 30 accounts)        | Done    |
 | 2026-04-06 07:01 | Odoo sync — Current_Month.md updated (customers: 1, invoices: 0, overdue: 0, COA: 30 accounts)        | Done    |
 | 2026-04-05 14:30 | Email replied — Sarah Malik / TechStartup.pk — sent via Gmail MCP                                     | Done    |
 | 2026-04-05 08:15 | Email received — Sarah Malik / TechStartup.pk (HIGH priority)                                         | Done    |
@@ -42,7 +49,9 @@
 
 ## Active Items
 
-*No active items — vault is clean and ready.*
+| Plan | Status | Next Step |
+|------|--------|-----------|
+| PLAN_enterprise_client_onboarding_20260408_120500.md | Step 2/9 — awaiting approval | Approve initial reply email to Ahmed Khan |
 
 ---
 
@@ -50,14 +59,14 @@
 
 | Metric | Count |
 |--------|-------|
-| Emails received | 1 |
+| Emails received | 2 |
 | Emails sent | 1 |
-| Plans created | 1 |
-| Approvals requested | 2 |
+| Plans created | 2 |
+| Approvals requested | 3 |
 | Approvals granted | 2 |
 | Approvals rejected | 0 |
 | Social posts published | 1 |
-| Items in Done | 1 |
+| Items in Done | 2 |
 | CEO Briefings generated | 1 |
 
 ---
@@ -73,7 +82,7 @@
 
 ## Platinum Tier — Accounting Summary
 
-> Source: `/Accounting/Current_Month.md` — Last synced: **2026-04-06 07:01 PKT (live)**
+> Source: `/Accounting/Current_Month.md` — Last synced: **2026-04-08 12:00 PKT (live)**
 
 | Metric | Amount (PKR) |
 |--------|-------------|
@@ -92,7 +101,7 @@
 
 | Platform | Last Post | Status |
 |----------|-----------|--------|
-| Facebook | 2026-04-06 | Posted (post_id: 952305651310527_122108231907169437) |
+| Facebook | 2026-04-08 | Dry-run (live creds needed — set FB_PAGE_ACCESS_TOKEN + SOCIAL_DRY_RUN=false) |
 | Instagram | — | No posts yet |
 | Twitter/X | — | No posts yet (dry-run mode) |
 | LinkedIn | 2026-02-18 | Posted |

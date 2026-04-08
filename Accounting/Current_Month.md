@@ -1,13 +1,13 @@
 ---
 month: April 2026
-last_synced: 2026-04-06T15:35:00
+last_synced: 2026-04-08T12:00:00
 source: odoo
 odoo_version: 19.0-20260217
 database: ai_employee_db
 ---
 # Accounting — April 2026
 
-> **Last synced:** 2026-04-06 15:35 PKT via Odoo MCP (live sync)
+> **Last synced:** 2026-04-08 12:00 PKT via Odoo MCP (live sync)
 > **Source:** Odoo 19 — `ai_employee_db` — `http://localhost:8069`
 
 ---
